@@ -104,6 +104,8 @@ interface TranslationProviderProps {
   children: ReactNode;
   /** 対象モジュール名 */
   module: string;
+  /** 親モジュール名（Settings配下など） */
+  parent?: string;
   /** 初期翻訳データ（SSRやテスト用） */
   initialTranslations?: TranslationData;
   /** 言語コード（指定しない場合はサーバー側で決定） */
@@ -120,6 +122,7 @@ interface TranslationProviderProps {
 export function TranslationProvider({
   children,
   module,
+  parent,
   initialTranslations,
   language: initialLanguage,
 }: TranslationProviderProps) {
@@ -137,6 +140,7 @@ export function TranslationProvider({
 
       const response = await fetchTranslations({
         module,
+        parent,
         language: initialLanguage,
       });
 
@@ -151,7 +155,8 @@ export function TranslationProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [module, initialLanguage]);
+  }, /* [module, initialLanguage] */
+  [module, parent, initialLanguage]);
 
   useEffect(() => {
     if (!initialTranslations) {
