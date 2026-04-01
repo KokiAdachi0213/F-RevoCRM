@@ -460,6 +460,75 @@ button#advanceIntiateSave + input {
   }
 }
 
+/**
+ * ドキュメント作成フォーム レスポンシブレイアウト
+ * ブレークポイント: 768px（React版QuickCreateのTailwind md: と統一）
+ * 他モジュールの既存レスポンシブCSS（830px）とは異なるため注意
+ **/
+.createDocumentFields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+}
+
+.createDocumentRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.createDocumentRow--full {
+  width: 100%;
+}
+
+.createDocumentRow--half {
+  width: calc(50% - 10px);
+  box-sizing: border-box;
+}
+
+.createDocumentLabel {
+  width: 110px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.createDocumentValue {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .createDocumentRow {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .createDocumentRow--half {
+    width: 100%;
+  }
+
+  .createDocumentLabel {
+    width: auto;
+    text-align: left;
+  }
+
+  .createDocumentLabel label {
+    float: none !important;
+  }
+
+  .createDocumentValue {
+    width: 100%;
+  }
+
+  .createDocumentValue .inputElement {
+    width: 100%;
+  }
+
+  .createDocumentValue .select2-container {
+    width: 100% !important;
+  }
+}
 
 /**
  * モジュールアイコンのPNGファイル指定時のスタイル調整
