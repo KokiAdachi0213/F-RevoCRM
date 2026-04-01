@@ -306,9 +306,9 @@ Vtiger.Class("Vtiger_Detail_Js",{
 						}
 
 						// リッチテキストエディタの値をセット
-						var ckeditor_columns = ['description', 'solution'];
-						ckeditor_columns.forEach(function (ckeditor_column) {
-							var textarea = $(form).find('textarea[name="'+ckeditor_column+'"]');
+						var richTextColumns = ['description', 'solution'];
+						richTextColumns.forEach(function (richTextColumn) {
+							var textarea = $(form).find('textarea[name="'+richTextColumn+'"]');
 							if ($(form.module).val() === 'HelpDesk' && textarea.length) {
 								var rteElement = textarea.data('richTextEditor');
 								if (rteElement) {
