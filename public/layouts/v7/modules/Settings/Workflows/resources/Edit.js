@@ -10,7 +10,7 @@ Settings_Vtiger_Edit_Js("Settings_Workflows_Edit_Js", {
 }, {
     workFlowsContainer: false,
     advanceFilterInstance: false,
-    ckEditorInstance: false,
+    richTextEditorInstance: false,
     fieldValueMap: false,
     workFlowsActionContainer : false,
    
@@ -779,13 +779,13 @@ Settings_Vtiger_Edit_Js("Settings_Workflows_Edit_Js", {
    },
    
    /**
-    * Function to get ckEditorInstance
+    * Function to get richTextEditorInstance
     */
-   getckEditorInstance: function () {
-      if (this.ckEditorInstance == false) {
-         this.ckEditorInstance = new Vtiger_CkEditor_Js();
+   getRichTextEditorInstance: function () {
+      if (this.richTextEditorInstance == false) {
+         this.richTextEditorInstance = new Vtiger_RichTextEditor_Js();
       }
-      return this.ckEditorInstance;
+      return this.richTextEditorInstance;
    },
    registerTaskStatusChangeEvent: function () {
       var container = this.getActionContainer();
@@ -866,8 +866,8 @@ Settings_Vtiger_Edit_Js("Settings_Workflows_Edit_Js", {
    },
    registerVTEmailTaskEvents: function () {
       var textAreaElement = jQuery('#content');
-      var ckEditorInstance = this.getckEditorInstance();
-      ckEditorInstance.loadCkEditor(textAreaElement);
+      var richTextEditorInstance = this.getRichTextEditorInstance();
+      richTextEditorInstance.loadRichTextEditor(textAreaElement);
       this.registerFillMailContentEvent();
       this.registerTooltipEventForSignatureField();
       this.registerFillTaskFromEmailFieldEvent();

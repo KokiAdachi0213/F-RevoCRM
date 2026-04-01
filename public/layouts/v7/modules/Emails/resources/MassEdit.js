@@ -13,7 +13,7 @@ jQuery.Class("Emails_MassEdit_Js",{},{
 		this.preloadData = new Array();
 	}, 
 
-	ckEditorInstance : false,
+	richTextEditorInstance : false,
 	massEmailForm : false,
 	saved : "SAVED",
 	sent : "SENT",
@@ -40,13 +40,13 @@ jQuery.Class("Emails_MassEdit_Js",{},{
 	},
 
 	/**
-	 * Function to get ckEditorInstance
+	 * Function to get richTextEditorInstance
 	 */
-	getckEditorInstance : function(){
-		if(this.ckEditorInstance == false){
-			this.ckEditorInstance = new Vtiger_CkEditor_Js();
+	getRichTextEditorInstance : function(){
+		if(this.richTextEditorInstance == false){
+			this.richTextEditorInstance = new Vtiger_RichTextEditor_Js();
 		}
-		return this.ckEditorInstance;
+		return this.richTextEditorInstance;
 	},
 
 	/**
@@ -523,9 +523,9 @@ jQuery.Class("Emails_MassEdit_Js",{},{
 		}
 	},
 
-	loadCkEditor : function(textAreaElement){
-		var ckEditorInstance = this.getckEditorInstance();
-		ckEditorInstance.loadCkEditor(textAreaElement);
+	loadRichTextEditor : function(textAreaElement){
+		var richTextEditorInstance = this.getRichTextEditorInstance();
+		richTextEditorInstance.loadRichTextEditor(textAreaElement);
 	},
 
 	setAttachmentsFileSizeByElement : function(element){
@@ -852,9 +852,9 @@ jQuery.Class("Emails_MassEdit_Js",{},{
 			this.registerBrowseCrmEvent();
 			this.calculateUploadFileSize();
 			this.registerSaveDraftOrSendEmailEvent();
-			var isCkeditorApplied = jQuery('#description').data('isCkeditorApplied');
-			if(isCkeditorApplied != true && jQuery('#description').length > 0){
-				this.loadCkEditor(jQuery('#description').data('isCkeditorApplied',true));
+			var isRichTextEditorApplied = jQuery('#description').data('isRichTextEditorApplied');
+			if(isRichTextEditorApplied != true && jQuery('#description').length > 0){
+				this.loadRichTextEditor(jQuery('#description').data('isRichTextEditorApplied',true));
 			}
 			this.registerSelectEmailTemplateEvent();
 			this.registerEventsForToField();
@@ -888,11 +888,11 @@ jQuery.Class("Emails_MassEdit_Js",{},{
 				var responseData = JSON.parse(data);
 				jQuery('.popupModal').modal('hide');
 
-				var ckEditorInstance = thisInstance.getckEditorInstance();
+				var richTextEditorInstance = thisInstance.getRichTextEditorInstance();
 
 				for(var id in responseData){
 					var data = responseData[id];
-					ckEditorInstance.loadContentsInCkeditor(data['info']);
+					richTextEditorInstance.loadContentsInRichTextEditor(data['info']);
 					//fill subject
 					jQuery('#subject').val(data['name']);
 					var selectedTemplateBody = responseData[id].info;

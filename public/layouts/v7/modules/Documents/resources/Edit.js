@@ -136,18 +136,18 @@ Vtiger_Edit_Js("Documents_Edit_Js", {
 		});
 	},
 	/**
-	 * Function to register event for ckeditor for description field
+	 * Function to register event for RichTextEditor for description field
 	 */
-	registerEventForCkEditor : function(container){
+	registerEventForRichTextEditor : function(container){
 		var form = this.getForm();
         if(typeof container != 'undefined'){
             form = container;
         }
 		var noteContentElement = form.find('[name="notecontent"]');
 		if(noteContentElement.length > 0){
-			noteContentElement.removeAttr('data-validation-engine').addClass('ckEditorSource');
-			var ckEditorInstance = new Vtiger_CkEditor_Js();
-			ckEditorInstance.loadCkEditor(noteContentElement);
+			noteContentElement.removeAttr('data-validation-engine').addClass('richTextEditorSource');
+			var richTextEditorInstance = new Vtiger_RichTextEditor_Js();
+			richTextEditorInstance.loadRichTextEditor(noteContentElement);
 		}
 	},
     
@@ -342,7 +342,7 @@ Vtiger_Edit_Js("Documents_Edit_Js", {
         this._super(container);
         this.registerFileLocationTypeChangeEvent(container);
             this.registerFileElementChangeEvent(container);
-            this.registerEventForCkEditor(container);
+            this.registerEventForRichTextEditor(container);
             this.documentsQuickCreateConfig(container);
             this.handleDragDropEvents(container);
             this.registerCustomValidationForFileElement(container);

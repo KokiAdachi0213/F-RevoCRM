@@ -10,19 +10,19 @@
 Vtiger_Edit_Js("EmailTemplates_Edit_Js",{},{
 
 	/**
-	 * Function to register event for ckeditor for description field
+	 * Function to register event for RichTextEditor for description field
 	 */
-	registerEventForCkEditor : function(){
+	registerEventForRichTextEditor : function(){
 		var templateContentElement = jQuery("#templatecontent");
 		if(templateContentElement.length > 0) {
 			if(jQuery('#EditView').find('.isSystemTemplate').val() == 1) {
-				templateContentElement.removeAttr('data-validation-engine').addClass('ckEditorSource');
+				templateContentElement.removeAttr('data-validation-engine').addClass('richTextEditorSource');
 			}
             var customConfig = {
                 "height":"600px"
             }
-			var ckEditorInstance = new Vtiger_CkEditor_Js();
-			ckEditorInstance.loadCkEditor(templateContentElement,customConfig);
+			var richTextEditorInstance = new Vtiger_RichTextEditor_Js();
+			richTextEditorInstance.loadRichTextEditor(templateContentElement,customConfig);
 		}
         this.registerFillTemplateContentEvent();
 
@@ -145,7 +145,7 @@ Vtiger_Edit_Js("EmailTemplates_Edit_Js",{},{
 	 * Registered the events for this page
 	 */
 	registerEvents : function() {
-		this.registerEventForCkEditor();
+		this.registerEventForRichTextEditor();
 		this.registerChangeEventForModule();
 		//To load default selected module fields in edit view
 		this.loadFields();
