@@ -291,7 +291,7 @@ class Vtiger_Detail_View extends Vtiger_Index_View {
 			"modules.$moduleName.resources.RelatedList",
 			'libraries.jquery.jquery_windowmsg',
 			"modules.Emails.resources.MassEdit",
-			"modules.Vtiger.resources.CkEditor",
+			"modules.Vtiger.resources.RichTextEditor",
 			"~/libraries/jquery/twitter-text-js/twitter-text.js",
 			"libraries.jquery.multiplefileupload.jquery_MultiFile",
 			'~/libraries/jquery/bootstrapswitch/js/bootstrap-switch.min.js',

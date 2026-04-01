@@ -21,7 +21,7 @@ Class Documents_Edit_View extends Vtiger_Edit_View {
 		$moduleName = $request->getModule();
 
 		$jsFileNames = array(
-				'modules.Vtiger.resources.CkEditor',
+				'modules.Vtiger.resources.RichTextEditor',
 		);
 		$jsScriptInstances = $this->checkAndConvertJsScripts($jsFileNames);
 		$headerScriptInstances = array_merge($headerScriptInstances, $jsScriptInstances);

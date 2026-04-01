@@ -57,7 +57,7 @@ Class EmailTemplates_Edit_View extends Vtiger_Index_View {
 	function getHeaderScripts(Vtiger_Request $request) {
 		$headerScriptInstances = parent::getHeaderScripts($request);
 		$jsFileNames = array(
-			'modules.Vtiger.resources.CkEditor',
+			'modules.Vtiger.resources.RichTextEditor',
 			'modules.Settings.Vtiger.resources.Vtiger',
 			'modules.Settings.Vtiger.resources.Index',
 			"~layouts/v7/lib/jquery/Lightweight-jQuery-In-page-Filtering-Plugin-instaFilta/instafilta.min.js"

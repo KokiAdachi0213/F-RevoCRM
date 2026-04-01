@@ -139,7 +139,7 @@ class Vtiger_List_View extends Vtiger_Index_View {
 			"modules.$moduleName.resources.ListSidebar",
 			'modules.CustomView.resources.CustomView',
 			"modules.$moduleName.resources.CustomView",
-			"modules.Vtiger.resources.CkEditor",
+			"modules.Vtiger.resources.RichTextEditor",
 			//for vtiger7 
 			"modules.Vtiger.resources.MergeRecords",
 			"~layouts/v7/lib/jquery/Lightweight-jQuery-In-page-Filtering-Plugin-instaFilta/instafilta.min.js",
