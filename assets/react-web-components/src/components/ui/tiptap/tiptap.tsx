@@ -40,6 +40,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuPortal,
   DropdownMenuTrigger,
 } from "../dropdown-menu";
 
@@ -90,6 +91,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
     const [sourceHtml, setSourceHtml] = useState("");
     const [fontSizeDropdownMaxHeight, setFontSizeDropdownMaxHeight] = useState<number | undefined>(undefined);
     const fontSizeTriggerRef = useRef<HTMLButtonElement>(null);
+    const portalContainerRef = useRef<HTMLDivElement>(null);
     const [isMobile, setIsMobile] = useState(
       () => typeof window !== 'undefined' && window.innerWidth < 768
     );
@@ -427,6 +429,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
     const currentHighlight = editorToolbarState?.highlight ?? "";
 
     return (
+      <>
       <div style={{ overflow: 'hidden' }}>
         {/* ===== Main Toolbar ===== */}
         <div ref={toolbarWrapperRef} style={{ position: 'relative' }}>
@@ -459,6 +462,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
                 })()}
               </button>
             </DropdownMenuTrigger>
+            <DropdownMenuPortal container={portalContainerRef.current}>
             <DropdownMenuContent
               side="bottom"
               align="start"
@@ -487,6 +491,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
+            </DropdownMenuPortal>
           </DropdownMenu>
 
           {/* Font size */}
@@ -505,6 +510,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
                 <ChevronDown size={10} />
               </button>
             </DropdownMenuTrigger>
+            <DropdownMenuPortal container={portalContainerRef.current}>
             <DropdownMenuContent
               side="bottom"
               align="start"
@@ -585,6 +591,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
                 })
               )}
             </DropdownMenuContent>
+            </DropdownMenuPortal>
           </DropdownMenu>
 
           <div className="tiptap-separator" />
@@ -650,6 +657,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             columns={10}
             onSelect={(c) => editor?.chain().focus().setColor(c).run()}
             onClear={() => editor?.chain().focus().unsetColor().run()}
+            portalContainer={portalContainerRef.current}
           />
           <ColorPicker
             icon={<Highlighter size={14} />}
@@ -661,6 +669,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
               editor?.chain().focus().toggleHighlight({ color: c }).run()
             }
             onClear={() => editor?.chain().focus().unsetHighlight().run()}
+            portalContainer={portalContainerRef.current}
           />
 
           <div className="tiptap-separator" />
@@ -802,6 +811,8 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           </div>
         )}
       </div>
+      <div ref={portalContainerRef} style={{ position: 'relative' }} />
+      </>
     );
   }
 );

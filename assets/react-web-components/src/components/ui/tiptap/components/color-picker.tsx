@@ -3,6 +3,7 @@ import { ChevronDown, RemoveFormatting } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuPortal,
   DropdownMenuTrigger,
 } from "../../dropdown-menu";
 
@@ -14,6 +15,7 @@ interface ColorPickerProps {
   columns?: number;
   onSelect: (color: string) => void;
   onClear: () => void;
+  portalContainer?: HTMLElement | null;
 }
 
 export const ColorPicker = ({
@@ -24,6 +26,7 @@ export const ColorPicker = ({
   columns = 6,
   onSelect,
   onClear,
+  portalContainer,
 }: ColorPickerProps) => (
   <DropdownMenu modal={false}>
     <DropdownMenuTrigger asChild>
@@ -45,6 +48,7 @@ export const ColorPicker = ({
         <ChevronDown size={8} />
       </button>
     </DropdownMenuTrigger>
+    <DropdownMenuPortal container={portalContainer}>
     <DropdownMenuContent
       style={{ padding: "8px", width: "auto" }}
       onMouseDown={(e) => e.preventDefault()}
@@ -79,5 +83,6 @@ export const ColorPicker = ({
         <span>クリア</span>
       </button>
     </DropdownMenuContent>
+    </DropdownMenuPortal>
   </DropdownMenu>
 );
