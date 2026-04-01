@@ -1177,7 +1177,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
     const currentHighlight = editorToolbarState?.highlight ?? "";
 
     return (
-      <div>
+      <div style={{ overflow: 'hidden' }}>
         {/* ===== Main Toolbar ===== */}
         <div ref={toolbarWrapperRef} style={{ position: 'relative' }}>
           <div

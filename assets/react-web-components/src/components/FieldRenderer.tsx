@@ -192,12 +192,12 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           </div>
         );
 
-      // テキストエリア系 - Textarea / Tiptap（isCkEditor対象）
+      // テキストエリア系 - Textarea / Tiptap（isRichTextEditor対象）
       // pt-[7px]でラベル（leading-[30px]）の1行目と縦位置を揃える
       case UI_TYPES.TEXTAREA:
       case UI_TYPES.TEXTAREA_LONG:
       case UI_TYPES.TEXTAREA_20:
-        if (field.isCkEditor) {
+        if (field.isRichTextEditor) {
           const handleTiptapChange = (e: { target: { name: string; value: string } }) => {
             onChange(e.target.name, e.target.value);
           };

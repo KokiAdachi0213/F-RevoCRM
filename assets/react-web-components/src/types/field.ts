@@ -75,7 +75,7 @@ export interface FieldInfo {
   /** 税情報（UIType 83: ProductTax用） */
   taxClassDetails?: TaxClassDetails;
   /** リッチテキストエディタ（Tiptap）対象フィールドかどうか */
-  isCkEditor?: boolean;
+  isRichTextEditor?: boolean;
 }
 
 /**

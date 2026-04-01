@@ -32,7 +32,6 @@ export function createWebComponent(
       this.style.display = 'block';
       this.style.width = '100%';
       this.style.maxWidth = '100%';
-      this.style.overflow = 'hidden';
       this.style.boxSizing = 'border-box';
 
       // Reactのマウントポイントを作成

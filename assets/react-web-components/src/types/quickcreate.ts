@@ -253,7 +253,7 @@ export interface QuickCreateFieldData {
     check_value: string;
   };
   /** リッチテキストエディタ（Tiptap）対象フィールドかどうか */
-  isCkEditor?: boolean;
+  isRichTextEditor?: boolean;
 }
 
 /**

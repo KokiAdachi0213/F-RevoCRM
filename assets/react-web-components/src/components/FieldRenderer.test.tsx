@@ -395,7 +395,7 @@ describe('FieldRenderer', () => {
         uitype: UI_TYPES.TEXTAREA,
         name: 'description',
         label: '詳細',
-        isCkEditor: true,
+        isRichTextEditor: true,
       });
       const onChange = vi.fn();
 
@@ -417,7 +417,7 @@ describe('FieldRenderer', () => {
         uitype: UI_TYPES.TEXTAREA,
         name: 'description',
         label: '詳細',
-        isCkEditor: true,
+        isRichTextEditor: true,
       });
       const onChange = vi.fn();
 
