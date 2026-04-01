@@ -347,7 +347,7 @@ class Vtiger_GetFields_Api extends Vtiger_Api_Controller {
             $fieldInfo['quickcreatesequence'] = $fieldModel->get('quickcreatesequence');
 
             // リッチテキストエディタ（Tiptap）対象フィールドかどうか
-            $fieldInfo['isCkEditor'] = $fieldModel->isCkEditor();
+            $fieldInfo['isRichTextEditor'] = $fieldModel->isRichTextEditor();
 
             // CustomValidation情報を追加
             $customValidations = $this->getCustomValidationsForField($fieldModel->getId());
