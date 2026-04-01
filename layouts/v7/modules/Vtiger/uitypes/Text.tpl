@@ -16,7 +16,7 @@
   {assign var="FIELD_NAME" value=$FIELD_MODEL->getFieldName()}
 {/if}
 {if $FIELD_MODEL->get('uitype') eq '19' || $FIELD_MODEL->get('uitype') eq '20'}
-    {if $FIELD_MODEL->isCkEditor()}
+    {if $FIELD_MODEL->isRichTextEditor()}
         {* リッチテキストエディタ: hidden textareaで値を保持し、Web Componentで編集 *}
         {assign var="FIELD_VALUE" value=purifyHtmlEventAttributes($FIELD_MODEL->get('fieldvalue'),true)|regex_replace:"/(?!\w)\&nbsp;(?=\w)/":" "}
         <textarea style="display:none" id="{$MODULE}_editView_fieldName_{$FIELD_NAME}" class="inputElement textAreaElement" name="{$FIELD_NAME}"
