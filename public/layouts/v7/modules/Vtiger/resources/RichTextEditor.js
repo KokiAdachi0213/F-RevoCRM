@@ -8,7 +8,7 @@
  *
  * Modified: CKEditor replaced with <rich-text-editor> Web Component (Tiptap)
  *************************************************************************************/
-jQuery.Class("Vtiger_CkEditor_Js",{},{
+jQuery.Class("Vtiger_RichTextEditor_Js",{},{
 
 	setElement : function(element){
 		this.element = element;
@@ -24,13 +24,13 @@ jQuery.Class("Vtiger_CkEditor_Js",{},{
 		return element.attr('id');
 	},
 
-	getCkEditorInstanceFromName : function(){
+	getRichTextEditorInstanceFromName : function(){
 		var element = this.getElement();
 		return element.data('richTextEditor');
 	},
 
 	getPlainText : function() {
-		var rteElement = this.getCkEditorInstanceFromName();
+		var rteElement = this.getRichTextEditorInstanceFromName();
 		if (rteElement) {
 			var tempDiv = document.createElement('div');
 			tempDiv.innerHTML = rteElement.getAttribute('value') || '';
@@ -45,7 +45,7 @@ jQuery.Class("Vtiger_CkEditor_Js",{},{
 	 *   1. TPL直埋め込み: data-target属性を持つ<rich-text-editor>が既にDOM上にある場合、同期だけセットアップ
 	 *   2. 動的生成: textareaを隠してWeb Componentを動的に作成
 	 */
-	loadCkEditor : function(element, customConfig){
+	loadRichTextEditor : function(element, customConfig){
 		this.setElement(element);
 		var self = this;
 
@@ -90,16 +90,16 @@ jQuery.Class("Vtiger_CkEditor_Js",{},{
 		element.data('richTextEditor', rteElement);
 	},
 
-	loadContentsInCkeditor : function(contents){
-		var rteElement = this.getCkEditorInstanceFromName();
+	loadContentsInRichTextEditor : function(contents){
+		var rteElement = this.getRichTextEditorInstanceFromName();
 		if (rteElement) {
 			rteElement.setAttribute('value', contents);
 		}
 	},
 
-	removeCkEditor : function() {
+	removeRichTextEditor : function() {
 		if (this.getElement()) {
-			var rteElement = this.getCkEditorInstanceFromName();
+			var rteElement = this.getRichTextEditorInstanceFromName();
 			if (rteElement) {
 				var currentValue = rteElement.getAttribute('value') || '';
 				this.getElement().val(currentValue);
@@ -111,7 +111,7 @@ jQuery.Class("Vtiger_CkEditor_Js",{},{
 	},
 
 	getData : function() {
-		var rteElement = this.getCkEditorInstanceFromName();
+		var rteElement = this.getRichTextEditorInstanceFromName();
 		if (rteElement) {
 			return rteElement.getAttribute('value') || '';
 		}
