@@ -67,6 +67,8 @@ import { DirAttribute } from "./extensions/dir-attribute";
 import { StyledDiv } from "./extensions/styled-div";
 import { StyledTableRow } from "./extensions/styled-table-row";
 import { PageBreak } from "./extensions/page-break";
+import { Anchor } from "./extensions/anchor";
+import { Marker } from "./extensions/marker";
 import { TableBubbleMenu } from "./components/table-bubble-menu";
 import { ColorPicker } from "./components/color-picker";
 import { TEXT_COLORS, HIGHLIGHT_COLORS } from "./constants";
@@ -142,6 +144,8 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
         DirAttribute,
         StyledDiv,
         PageBreak,
+        Anchor,
+        Marker,
       ],
       content: content,
       editorProps: {
