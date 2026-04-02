@@ -1,4 +1,5 @@
 import { Extension } from "@tiptap/core";
+import { normalizeLength } from "./utils/normalize";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -18,7 +19,11 @@ export const FontSizeExtension = Extension.create({
         attributes: {
           fontSize: {
             default: null,
-            parseHTML: (element) => element.style.fontSize || null,
+            parseHTML: (element) => {
+              const raw = element.style.fontSize;
+              if (!raw) return null;
+              return normalizeLength(raw, 200, 1);
+            },
             renderHTML: (attributes) => {
               if (!attributes.fontSize) return {};
               return { style: `font-size: ${attributes.fontSize}` };

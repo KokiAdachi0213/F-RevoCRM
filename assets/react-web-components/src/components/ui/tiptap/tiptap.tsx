@@ -3,9 +3,11 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import Heading from "@tiptap/extension-heading";
 import Underline from "@tiptap/extension-underline";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import TextAlign from "@tiptap/extension-text-align";
 import Color from "@tiptap/extension-color";
 import { TextStyle } from "@tiptap/extension-text-style";
-import { TableRow } from "@tiptap/extension-table-row";
 import {
   useEditor,
   useEditorState,
@@ -56,6 +58,15 @@ import {
   SelectAllExtension,
   ResizableImage,
 } from "./extensions";
+import { Address } from "./extensions/address";
+import { Big, Small } from "./extensions/big-small";
+import { Kbd } from "./extensions/kbd";
+import { BlockColor } from "./extensions/block-color";
+import { FontFamilyExtension } from "./extensions/font-family";
+import { DirAttribute } from "./extensions/dir-attribute";
+import { StyledDiv } from "./extensions/styled-div";
+import { StyledTableRow } from "./extensions/styled-table-row";
+import { PageBreak } from "./extensions/page-break";
 import { TableBubbleMenu } from "./components/table-bubble-menu";
 import { ColorPicker } from "./components/color-picker";
 import { TEXT_COLORS, HIGHLIGHT_COLORS } from "./constants";
@@ -104,9 +115,12 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
 
     const editor = useEditor({
       extensions: [
-        StarterKit,
+        StarterKit.configure({ heading: false }),
         Underline,
-        Heading.configure({ levels: [1, 2, 3] }),
+        Subscript,
+        Superscript,
+        Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
+        TextAlign.configure({ types: ["heading", "paragraph", "address"] }),
         TextStyle,
         Color,
         FontSizeExtension,
@@ -116,9 +130,18 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
         SelectAllExtension,
         ResizableImage.configure({ inline: true, allowBase64: true }),
         StyledTable.configure({ resizable: false }),
-        TableRow,
+        StyledTableRow,
         StyledTableHeader,
         StyledTableCell,
+        Address,
+        Big,
+        Small,
+        Kbd,
+        BlockColor,
+        FontFamilyExtension,
+        DirAttribute,
+        StyledDiv,
+        PageBreak,
       ],
       content: content,
       editorProps: {
@@ -430,7 +453,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
 
     return (
       <>
-      <div style={{ overflow: 'hidden' }}>
+      <div>
         {/* ===== Main Toolbar ===== */}
         <div ref={toolbarWrapperRef} style={{ position: 'relative' }}>
           <div

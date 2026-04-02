@@ -1,4 +1,5 @@
 import { Table } from "@tiptap/extension-table";
+import { normalizeColor } from "./utils/normalize";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 
@@ -27,7 +28,7 @@ export const StyledTable = Table.extend({
 const cellAttributes = {
   backgroundColor: {
     default: null,
-    parseHTML: (el: HTMLElement) => el.style.backgroundColor || null,
+    parseHTML: (el: HTMLElement) => normalizeColor(el.style.backgroundColor || ""),
     renderHTML: () => ({}),
   },
 };

@@ -1,4 +1,5 @@
 import Highlight from "@tiptap/extension-highlight";
+import { normalizeColor } from "./utils/normalize";
 
 /**
  * Highlight拡張をカスタマイズ: <mark> → <span> に変更
@@ -25,10 +26,13 @@ export const SpanHighlight = Highlight.extend({
     return {
       color: {
         default: null,
-        parseHTML: (element) =>
-          element.getAttribute("data-color") ||
-          element.style.backgroundColor ||
-          null,
+        parseHTML: (element) => {
+          const raw =
+            element.getAttribute("data-color") ||
+            element.style.backgroundColor;
+          if (!raw) return null;
+          return normalizeColor(raw);
+        },
         renderHTML: (attributes) => {
           if (!attributes.color) return {};
           return {

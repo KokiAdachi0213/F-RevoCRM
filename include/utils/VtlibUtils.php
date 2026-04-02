@@ -700,8 +700,14 @@ function vtlib_purify($input, $ignore = false) {
             $config->set('Core.Encoding', $use_charset);
             $config->set('Cache.SerializerPath', "$use_root_directory/test/vtlib");
             $config->set('CSS.AllowTricky', true);
+            $config->set('CSS.Proprietary', true);
             $config->set('URI.AllowedSchemes', $allowedSchemes);
             $config->set('Attr.EnableID', true);
+
+            $def = $config->getHTMLDefinition(true);
+            if ($def) {
+                $def->addAttribute('span', 'data-color', 'Text');
+            }
 
             $__htmlpurifier_instance = new HTMLPurifier($config);
         }
