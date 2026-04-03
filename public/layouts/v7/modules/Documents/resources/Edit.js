@@ -13,7 +13,10 @@ Vtiger_Edit_Js("Documents_Edit_Js", {
 
 	INTERNAL_FILE_LOCATION_TYPE : 'I',
 	EXTERNAL_FILE_LOCATION_TYPE : 'E',
-    
+
+	quickCreatePreSave : function(form) {
+	},
+
 	getMaxiumFileUploadingSize : function(container) {
 		//TODO : get it from the server
 		return container.find('.maxUploadSize').data('value');

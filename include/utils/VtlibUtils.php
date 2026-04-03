@@ -698,7 +698,7 @@ function vtlib_purify($input, $ignore = false) {
 
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.Encoding', $use_charset);
-            $config->set('Cache.SerializerPath', "$use_root_directory/test/vtlib");
+            $config->set('Cache.SerializerPath', "$use_root_directory/test/templates_c/v7");
             $config->set('CSS.AllowTricky', true);
             $config->set('CSS.Proprietary', true);
             $config->set('URI.AllowedSchemes', $allowedSchemes);
