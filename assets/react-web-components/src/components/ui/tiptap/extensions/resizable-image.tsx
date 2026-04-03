@@ -17,9 +17,17 @@ const ResizableImageComponent = ({
       e.stopPropagation();
       const startX = e.clientX;
       const startWidth = imgRef.current?.offsetWidth || 200;
+      const startHeight =
+        (node.attrs.height as number) ||
+        imgRef.current?.naturalHeight ||
+        imgRef.current?.offsetHeight ||
+        0;
+      const ratio = startWidth > 0 ? startHeight / startWidth : 0;
       setResizing(true);
       const onMouseMove = (ev: MouseEvent) => {
-        updateAttributes({ width: Math.max(50, startWidth + ev.clientX - startX) });
+        const newWidth = Math.max(50, startWidth + ev.clientX - startX);
+        const newHeight = ratio > 0 ? Math.round(newWidth * ratio) : null;
+        updateAttributes({ width: newWidth, height: newHeight });
       };
       const onMouseUp = () => {
         setResizing(false);
@@ -78,10 +86,25 @@ export const ResizableImage = Image.extend({
         },
         renderHTML: (attributes) => {
           if (!attributes.width) return {};
+          const w = parseInt(String(attributes.width), 10);
+          if (!w || w <= 0) return {};
           return {
-            width: attributes.width,
-            style: `width: ${attributes.width}px`,
+            width: w,
+            style: `width: ${w}px`,
           };
+        },
+      },
+      height: {
+        default: null,
+        parseHTML: (element) => {
+          const h = element.getAttribute("height") || element.style.height;
+          return h ? parseInt(String(h), 10) || null : null;
+        },
+        renderHTML: (attributes) => {
+          if (!attributes.height) return {};
+          const h = parseInt(String(attributes.height), 10);
+          if (!h || h <= 0) return {};
+          return { height: h };
         },
       },
     };
