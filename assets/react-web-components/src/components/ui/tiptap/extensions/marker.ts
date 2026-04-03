@@ -10,6 +10,9 @@ const MARKER_CLASS_COLORS: Record<string, string> = {
   "marker-blue": "#0000ff",
 };
 
+// 許可されるクラス名のセット（セキュリティ: 許可リスト外は除去）
+export const ALLOWED_MARKER_CLASSES = new Set(Object.keys(MARKER_CLASS_COLORS));
+
 export const Marker = Mark.create({
   name: "marker",
 
@@ -18,20 +21,34 @@ export const Marker = Mark.create({
       backgroundColor: {
         default: null,
         parseHTML: (element) => {
-          // 1. class属性からマーカー色を取得
           const classList = element.className?.split(/\s+/) || [];
           for (const cls of classList) {
             const color = MARKER_CLASS_COLORS[cls];
             if (color) return color;
           }
-          // 2. style属性のbackground-colorからも取得（フォールバック）
           const bg = element.style.backgroundColor;
           if (bg) return normalizeColor(bg);
           return null;
         },
         renderHTML: (attributes) => {
           if (!attributes.backgroundColor) return {};
-          return { style: `background-color: ${attributes.backgroundColor}` };
+          const safe = normalizeColor(attributes.backgroundColor);
+          if (!safe) return {};
+          return { style: `background-color: ${safe}` };
+        },
+      },
+      markerClass: {
+        default: null,
+        parseHTML: (element) => {
+          const classList = element.className?.split(/\s+/) || [];
+          for (const cls of classList) {
+            if (ALLOWED_MARKER_CLASSES.has(cls)) return cls;
+          }
+          return null;
+        },
+        renderHTML: (attributes) => {
+          if (!attributes.markerClass || !ALLOWED_MARKER_CLASSES.has(attributes.markerClass)) return {};
+          return { class: attributes.markerClass };
         },
       },
     };
@@ -41,11 +58,13 @@ export const Marker = Mark.create({
     return [
       {
         tag: "span",
+        priority: 60,
         getAttrs: (el) => {
           const element = el as HTMLElement;
           const classList = element.className?.split(/\s+/) || [];
-          // markerクラスを持つspanのみマッチ
-          const hasMarkerClass = classList.some((cls) => cls in MARKER_CLASS_COLORS);
+          const hasMarkerClass = classList.some((cls) =>
+            ALLOWED_MARKER_CLASSES.has(cls)
+          );
           if (!hasMarkerClass) return false;
           return {};
         },
@@ -54,8 +73,6 @@ export const Marker = Mark.create({
   },
 
   renderHTML({ HTMLAttributes }) {
-    // class属性は出力しない（CSSクラス悪用防止）
-    const { class: _, ...rest } = HTMLAttributes;
-    return ["span", rest, 0];
+    return ["span", HTMLAttributes, 0];
   },
 });
