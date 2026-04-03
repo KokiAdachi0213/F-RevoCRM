@@ -46,6 +46,8 @@ HTMLPurifier実行
   ↓
 purifyHtmlEventAttributes（1回目 — vtlib_purify内部）
   ↓
+str_replace('&amp;', '&', $value)  ← HTMLPurifierがエンコードした&amp;を&に復元
+  ↓
 [vtlib_purify戻り値]
   ↓
 decode_html（2回目）
@@ -55,7 +57,9 @@ purifyHtmlEventAttributes（2回目 — Save.php側）
 DB保存
 ```
 
-**重要**: `purifyHtmlEventAttributes`は合計2回実行される。1回目はHTMLPurifier直後（vtlib_purify内部）、2回目はdecode_html後（Save.php側）。この二重実行の間にdecode_htmlが挟まる構造がエンコーディングバイパスの核心的な攻撃面。
+**重要**:
+- `purifyHtmlEventAttributes`は合計2回実行される。1回目はHTMLPurifier直後（vtlib_purify内部）、2回目はdecode_html後（Save.php側）。この二重実行の間にdecode_htmlが挟まる構造がエンコーディングバイパスの核心的な攻撃面。
+- `str_replace('&amp;', '&')` はHTMLPurifierが無害化した文字参照を再びデコードする処理であり、テストケース3-10の二重エンコード問題はこの処理に起因する可能性がある。
 
 ### 2.3 purifyHtmlEventAttributes内部処理
 
@@ -73,20 +77,20 @@ DB保存
 |---|---|---|---|---|
 | 1 | XSS（Stored XSS） | **最重点** | 単体 + 結合 | 40件 |
 | 2 | エンコーディングバイパス | **重点** | 単体 + 結合 | 17件 |
-| 3 | レイヤー間の隙間 | **重点** | 結合 | 18件 |
+| 3 | レイヤー間の隙間 | **重点** | 結合 | 22件 |
 | 4 | HTMLインジェクション | 標準 | 単体 | 10件 |
 | 5 | CSSインジェクション | 標準 | 単体 | 10件 |
 | 6 | DOMクロバリング | 標準 | 単体 | 5件 |
 | 7 | base64画像悪用 | 標準 | 単体 | 7件 |
-| | **合計** | | | **107件** |
+| | **合計** | | | **111件** |
 
 ### 3.2 判定基準
 
 | 判定 | 基準 |
 |---|---|
 | **PASS** | 期待する防御レイヤーで除去・無害化されている |
-| **PASS（別レイヤー）** | 除去されているが、期待と異なるレイヤーで防御（要調査フラグ付与） |
-| **FAIL** | 危険な要素/属性が残存し、XSSまたはインジェクションが成立する |
+| **PASS（別レイヤー）** | 除去されているが、期待と異なるレイヤーで防御。要調査フラグを付与し、期待レイヤーの防御が機能しない原因を調査。調査結果を設計書のクリティカル要検証項目に追記し、対応方針をユーザーに報告する |
+| **FAIL** | 危険な要素/属性が残存し、XSSまたはインジェクションが成立する。即座にユーザーに報告し、修正対応を行う |
 
 ### 3.3 クリティカル要検証項目
 
@@ -97,6 +101,9 @@ DB保存
 | 3 | 6-02: Attr.EnableID=trueによるDOMクロバリング | 任意のid属性がHTMLPurifierを通過し、既存JSと衝突する可能性 |
 | 4 | 7-02/7-05: base64画像サイズ無制限 | 巨大base64によるDoS（ブラウザ・サーバー双方） |
 | 5 | CSS.Proprietary=trueによるIE固有CSS | expression()等がバイパス可能な可能性 |
+| 6 | URI.AllowedSchemesにdata:が含まれる | `<img src="data:image/svg+xml,...">`でSVG内scriptが実行される可能性。HTMLPurifierがdata: URI内のコンテンツを検査するかの確認が必要 |
+| 7 | vtlib_purifyのキャッシュ機構 | purified_cacheによる結果キャッシュで浄化がスキップされる可能性（sha256ハッシュキー、理論上安全だが明示検証が必要） |
+| 8 | str_replace('&amp;', '&')による再デコード | vtlib_purify内部でHTMLPurifierが無害化した文字参照を&に復元する処理が、エンコーディングバイパスの起点となる可能性 |
 
 ---
 
@@ -119,12 +126,12 @@ DB保存
 | # | テストケース | 入力ペイロード | 期待防御レイヤー | 期待結果 |
 |---|---|---|---|---|
 | 1-08 | onerror | `<img src=x onerror="alert(1)">` | L1破棄, L3除去 | onerror属性除去 |
-| 1-09 | onload | `<body onload="alert(1)">` | L1破棄, L3除去 | onload属性除去 |
+| 1-09 | onload | `<body onload="alert(1)">` | L1破棄, L2+L3除去 | bodyタグ除去またはonload属性除去 |
 | 1-10 | onmouseover | `<div onmouseover="alert(1)">test</div>` | L3除去 | onmouseover属性除去 |
 | 1-11 | onfocus+autofocus | `<input onfocus="alert(1)" autofocus>` | L1破棄, L3除去 | onfocus属性除去 |
 | 1-12 | onanimationend | `<div onanimationend="alert(1)">` | L3除去 | 属性除去 |
 | 1-13 | 大文字イベント | `<img src=x ONERROR="alert(1)">` | L3除去 | 大文字小文字不問で除去 |
-| 1-14 | スペース挿入 | `<img src=x on error="alert(1)">` | L3除去 | 属性除去 |
+| 1-14 | スペース挿入（正規表現検証） | `<img src=x on error="alert(1)">` | L3除去 | L3の正規表現がスペース含むパターンでfalse negativeにならないことを確認（ブラウザはon errorをイベントとして解釈しないが、正規表現の堅牢性検証） |
 | 1-15 | タブ区切り | `<img src=x\tonerror="alert(1)">` | L3除去 | 属性除去 |
 
 ### 4.3 javascript: URI系
@@ -262,6 +269,25 @@ DB保存
 | 3-17 | faq_answer | Faq | Save.php | onerrorなし |
 | 3-18 | signature | Users設定 | SaveAjax.php | onerrorなし |
 
+### 6.5 data: URIスキーム通過検証
+
+| # | テストケース | 入力ペイロード | 検証ポイント | 期待結果 |
+|---|---|---|---|---|
+| 3-19 | **data: URI内SVGスクリプト** | `<img src="data:image/svg+xml,<svg onload='alert(1)'>">` | URI.AllowedSchemesでdata:が許可されているため、HTMLPurifierがdata: URI内のコンテンツを検査するか | scriptが実行されないこと |
+| 3-20 | **data: URI aタグ経由** | `<a href="data:text/html,<script>alert(1)</script>">click</a>` | aタグのhref属性でdata: URIが通過するか | data:text/htmlが拒否されること |
+
+### 6.6 キャッシュ機構の安全性検証
+
+| # | テストケース | 操作手順 | 検証ポイント | 期待結果 |
+|---|---|---|---|---|
+| 3-21 | 同一ペイロード別フィールド | 同じXSSペイロードをnotecontent→descriptionに連続投入 | purified_cacheヒット時にも浄化済み結果が返るか | 両フィールドとも浄化済み |
+
+### 6.7 SaveAjax既存レコード編集パス
+
+| # | テストケース | 操作手順 | 検証ポイント | 期待結果 |
+|---|---|---|---|---|
+| 3-22 | 既存レコード編集時の浄化 | 既存レコードのcommentcontentを編集して保存 | SaveAjax.php getRecordModelFromRequestの既存レコード編集パス（109行目）でpurifyRichTextFieldが適用されるか | 浄化済み |
+
 ---
 
 ## 7. Suite 4: HTMLインジェクション【標準】
@@ -332,7 +358,7 @@ DB保存
 |---|---|
 | Jest（フロントエンド正規化） | `assets/react-web-components/src/components/ui/tiptap/__tests__/security/` |
 | PHPUnit（バックエンド浄化） | `test/unit/tiptap-security/backend/` |
-| Playwright（結合テスト） | `test/unit/tiptap-security/integration/` |
+| Playwright（結合テスト） | `test/integration/tiptap-security/` |
 
 ### 11.2 単体テストの実装方針
 
