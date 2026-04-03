@@ -106,7 +106,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
     const fontSizeTriggerRef = useRef<HTMLButtonElement>(null);
     const portalContainerRef = useRef<HTMLDivElement>(null);
     const [isMobile, setIsMobile] = useState(
-      () => typeof window !== 'undefined' && window.innerWidth < 768
+      () => typeof window !== 'undefined' && window.innerWidth < 768 && window.matchMedia('(pointer: coarse)').matches
     );
     const toolbarRef = useRef<HTMLDivElement>(null);
     const toolbarWrapperRef = useRef<HTMLDivElement>(null);
@@ -279,7 +279,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
       let timer: ReturnType<typeof setTimeout>;
       const handleResize = () => {
         clearTimeout(timer);
-        timer = setTimeout(() => setIsMobile(window.innerWidth < 768), 150);
+        timer = setTimeout(() => setIsMobile(window.innerWidth < 768 && window.matchMedia('(pointer: coarse)').matches), 150);
       };
       window.addEventListener('resize', handleResize);
       return () => {
