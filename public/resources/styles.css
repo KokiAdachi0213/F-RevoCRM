@@ -484,6 +484,7 @@ button#advanceIntiateSave + input {
 
 .createDocumentRow--half {
   width: calc(50% - 10px);
+  max-width: calc(50% - 10px);
   box-sizing: border-box;
 }
 
@@ -496,6 +497,12 @@ button#advanceIntiateSave + input {
 .createDocumentValue {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
+}
+
+.createDocumentValue .select2-container {
+  width: 100% !important;
+  max-width: 100%;
 }
 
 @media (max-width: 767px) {
