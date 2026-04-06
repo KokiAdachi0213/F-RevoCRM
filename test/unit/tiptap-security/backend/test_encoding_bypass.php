@@ -33,6 +33,9 @@ $runner->addCase('2-15', "<img src=x o\x08nerror=\"alert(1)\">", 'encoding', 'RE
 $runner->addCase('2-16', "<scr\xE2\x80\x8Bipt>alert(1)</script>", 'encoding', 'REMOVED');
 $runner->addCase('2-17', "<img src=x on\xE2\x80\x8Berror=\"alert(1)\">", 'encoding', 'REMOVED');
 
+// === 5.3 三重エンコード ===
+$runner->addCase('2-18', '%25253Cscript%25253Ealert(1)%25253C/script%25253E', 'encoding', 'REMOVED');
+
 // テスト実行
 $runner->testFullPipeline();
 $runner->printReport();

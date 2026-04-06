@@ -157,7 +157,7 @@ class Vtiger_SaveAjax_Action extends Vtiger_Save_Action {
         if((in_array($fieldName, $richTextFields)) && $fieldValue !== null){
             $purifiedContent = vtlib_purify(decode_html($fieldValue));
             // Purify malicious html event attributes
-            $fieldValue = purifyHtmlEventAttributes(decode_html($purifiedContent),true);
+            $fieldValue = purifyHtmlEventAttributes($purifiedContent,true);
         }
         return $fieldValue;
     }

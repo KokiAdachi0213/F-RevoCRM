@@ -206,8 +206,8 @@ class SecurityTestRunner
      * Save.php L173-175 の処理を再現:
      *   1. decode_html($fieldValue)
      *   2. vtlib_purify(上記の結果)
-     *   3. decode_html(上記の結果)
-     *   4. purifyHtmlEventAttributes(上記の結果, true)
+     *   3. purifyHtmlEventAttributes(上記の結果, true)
+     *   ※2回目のdecode_htmlは三重エンコード脆弱性(3-11)の原因のため廃止
      *
      * @param string $input 入力HTML
      * @return string 浄化後HTML
@@ -220,13 +220,11 @@ class SecurityTestRunner
         // Step 2: HTMLPurifier + イベント属性除去
         $step2 = vtlib_purify($step1);
 
-        // Step 3: 再度HTMLエンティティをデコード
-        $step3 = decode_html($step2);
+        // Step 3: イベント属性除去（replaceAll=true）
+        // ※2回目のdecode_htmlは三重エンコード脆弱性(3-11)の原因のため廃止
+        $step3 = purifyHtmlEventAttributes($step2, true);
 
-        // Step 4: イベント属性除去（replaceAll=true）
-        $step4 = purifyHtmlEventAttributes($step3, true);
-
-        return $step4;
+        return $step3;
     }
 
     // =========================================================================

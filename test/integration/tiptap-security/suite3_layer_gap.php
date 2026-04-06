@@ -23,18 +23,17 @@ function runPipelineTest(string $id, string $name, string $payload, string $dang
 {
     $step1 = decode_html($payload);
     $step2 = vtlib_purify($step1);
-    $step3 = decode_html($step2);
-    $step4 = purifyHtmlEventAttributes($step3, true);
+    // ※2回目のdecode_htmlは三重エンコード脆弱性(3-11)の原因のため廃止
+    $step3 = purifyHtmlEventAttributes($step2, true);
 
-    $found = preg_match($dangerPattern, $step4);
+    $found = preg_match($dangerPattern, $step3);
     $status = $found ? 'NG' : 'OK';
 
     echo "[{$status}] {$id} {$name}\n";
     echo "    入力:           " . mb_substr($payload, 0, 80) . "\n";
     echo "    Step1(decode):  " . mb_substr($step1, 0, 80) . "\n";
     echo "    Step2(purify):  " . mb_substr($step2, 0, 80) . "\n";
-    echo "    Step3(decode2): " . mb_substr($step3, 0, 80) . "\n";
-    echo "    Step4(event):   " . mb_substr($step4, 0, 80) . "\n";
+    echo "    Step3(event):   " . mb_substr($step3, 0, 80) . "\n";
 
     if ($found) {
         echo "    *** FAIL: 危険なパターンが残存 ***\n";
@@ -74,8 +73,8 @@ if ($action === '--verify-pipeline') {
     echo "=== 6.6 キャッシュ機構検証 ===\n\n";
 
     $payload = '<img src=x onerror="alert(1)">';
-    $result1 = vtlib_purify(decode_html($payload));
-    $result2 = vtlib_purify(decode_html($payload));  // キャッシュヒット
+    $result1 = purifyHtmlEventAttributes(vtlib_purify(decode_html($payload)), true);
+    $result2 = purifyHtmlEventAttributes(vtlib_purify(decode_html($payload)), true);  // キャッシュヒット
     $clean1 = !preg_match('/on\w+\s*=/i', $result1);
     $clean2 = !preg_match('/on\w+\s*=/i', $result2);
     $status = ($clean1 && $clean2) ? 'OK' : 'NG';

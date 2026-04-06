@@ -62,6 +62,11 @@ $runner->addCase('1-38', '<template><script>alert(1)</script></template>', 'xss'
 $runner->addCase('1-39', '<noscript><img src=x onerror="alert(1)"></noscript>', 'xss', 'REMOVED');
 $runner->addCase('1-40', '<meta http-equiv="refresh" content="0;url=javascript:alert(1)">', 'xss', 'REMOVED');
 
+// === 1.9 閉じタグなしscript（purifyScript強化の検証） ===
+$runner->addCase('1-41', '<script>alert(1)', 'xss', 'REMOVED');
+$runner->addCase('1-42', '<script src="evil.js"/>', 'xss', 'REMOVED');
+$runner->addCase('1-43', '<script src="evil.js">', 'xss', 'REMOVED');
+
 // テスト実行
 $runner->testFullPipeline();
 $runner->printReport();

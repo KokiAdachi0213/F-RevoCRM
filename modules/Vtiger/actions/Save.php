@@ -172,7 +172,7 @@ class Vtiger_Save_Action extends Vtiger_Action_Controller {
             if((in_array($fieldName, $richTextFields)) && $fieldValue !== null){
                 $purifiedContent = vtlib_purify(decode_html($fieldValue));
                 // Purify malicious html event attributes
-                $fieldValue = purifyHtmlEventAttributes(decode_html($purifiedContent),true);
+                $fieldValue = purifyHtmlEventAttributes($purifiedContent,true);
 			}
 			if($fieldValue !== null) {
 				if(!is_array($fieldValue) && $fieldDataType != 'currency') {
