@@ -799,12 +799,8 @@ function purifyScript($value){
     // Module.php L163のdecode_htmlにより浄化後にエンティティが復元される経路があるため、
     // エンティティ形式（&lt;script等）も対象に含める
     $scriptRegex = '/(&.*?lt;|<)script\b[\w\W]*/i';
-    $result = preg_replace($scriptRegex, '', $value);
-    if ($result === null) {
-        error_log('purifyScript: preg_replace failed (error=' . preg_last_error() . ')');
-        return $value;
-    }
-    return $result;
+    $value = preg_replace($scriptRegex, '', $value);
+    return $value;
 }
 
 
