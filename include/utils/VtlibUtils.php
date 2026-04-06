@@ -765,8 +765,13 @@ $htmlEventAttributes = "onerror|onblur|onchange|oncontextmenu|onfocus|oninput|on
     // remove malicious html attributes with its value.
     if ($replaceAll) {
         $regex = '\s*[=&%#]\s*(?:"[^"]*"[\'"]*|\'[^\']*\'[\'"]*|[^]*[\s\/>])*/i';
-        $value = preg_replace("/\s*(" . $htmlEventAttributes . ")" . $regex, '', $value);
-		
+        $result = preg_replace("/\s*(" . $htmlEventAttributes . ")" . $regex, '', $value);
+        if ($result === null) {
+            error_log('purifyHtmlEventAttributes: preg_replace failed (error=' . preg_last_error() . ')');
+        } else {
+            $value = $result;
+        }
+
         //remove script tag with contents
         $value = purifyScript($value);
         //purify javascript alert from the tag contents
@@ -794,9 +799,16 @@ $htmlEventAttributes = "onerror|onblur|onchange|oncontextmenu|onfocus|oninput|on
 
 //function to remove script tag and its contents
 function purifyScript($value){
-    $scriptRegex = '/(&.*?lt;|<)script[\w\W]*?(>|&.*?gt;)[\w\W]*?(&.*?lt;|<)\/script(>|&.*?gt;|\s)/i';
-    $value = preg_replace($scriptRegex,'',$value);
-    return $value;
+    // HTMLPurifier通過後に生のscriptタグが残っている時点で異常事態のため、
+    // scriptタグ以降のすべてのコンテンツを信頼できないものとして全削除する（防御の深層化）
+    // エンティティ形式（&lt;script&gt;）はHTMLPurifierが安全と判断した表示用テキストのため対象外
+    $scriptRegex = '/<script\b[\w\W]*/i';
+    $result = preg_replace($scriptRegex, '', $value);
+    if ($result === null) {
+        error_log('purifyScript: preg_replace failed (error=' . preg_last_error() . ')');
+        return $value;
+    }
+    return $result;
 }
 
 
@@ -817,7 +829,17 @@ function purifyJavascriptAlert($value){
             foreach($matches[0] as $matchedValue){
                 //strict check addded - if &tab;/&newLine added in the above tags we are replacing it to spaces.
                 $purifyContent = preg_replace('/&NewLine;|&amp;NewLine;|&Tab;|&amp;Tab;|\t/i',' ',$matchedValue);
-                $purifyContent = preg_replace($javaScriptRegex,"<$tag>",$purifyContent);
+                if ($purifyContent === null) {
+                    error_log('purifyJavascriptAlert: preg_replace for entity replacement failed (error=' . preg_last_error() . ')');
+                    $purifyContent = $matchedValue;
+                }
+                $result = preg_replace($javaScriptRegex,"<$tag>",$purifyContent);
+                if ($result === null) {
+                    error_log('purifyJavascriptAlert: preg_replace for javascript check failed (error=' . preg_last_error() . ')');
+                    $purifyContent = $matchedValue;
+                } else {
+                    $purifyContent = $result;
+                }
                 $value = str_replace($matchedValue, $purifyContent, $value);
                 
                 /*
