@@ -37,6 +37,8 @@ class TestVerdict
     const OK_PARTIAL = 'OK*';  // 部分的に浄化された（改善の余地あり）
     const NG   = 'NG';    // 浄化が不十分（脆弱性の可能性）
     const SKIP = 'SKIP';  // テストスキップ
+    const REMOVED_WITH_PRESERVE = 'RWP';   // 危険除去 + 安全部分保持
+    const TRADEOFF = 'TRADE';              // 安全性とデータ保持が競合
 }
 
 /**
@@ -64,6 +66,9 @@ class TestResult
 
     /** @var string|null 保持チェック時の検索パターン */
     public $preservePattern;
+
+    /** @var string|null 除去確認用の危険パターン（正規表現） */
+    public $dangerPattern;
 
     /** @var string TestVerdict定数 */
     public $verdict;
@@ -140,7 +145,8 @@ class SecurityTestRunner
         string $input,
         string $category,
         string $expectationType,
-        ?string $preservePattern = null
+        ?string $preservePattern = null,
+        ?string $dangerPattern = null
     ): void {
         $this->cases[] = [
             'id'              => $id,
@@ -148,6 +154,7 @@ class SecurityTestRunner
             'category'        => $category,
             'expectationType' => strtoupper($expectationType),
             'preservePattern' => $preservePattern,
+            'dangerPattern'   => $dangerPattern,
         ];
     }
 
@@ -320,6 +327,7 @@ class SecurityTestRunner
                 $result->output          = '';
                 $result->expectationType = $case['expectationType'];
                 $result->preservePattern = $case['preservePattern'];
+                $result->dangerPattern   = $case['dangerPattern'];
                 $result->verdict         = TestVerdict::SKIP;
                 $result->reason          = '入力サイズが1MBを超過（メモリ保護）';
                 $result->durationMs      = 0;
@@ -338,6 +346,7 @@ class SecurityTestRunner
             $result->output          = $output;
             $result->expectationType = $case['expectationType'];
             $result->preservePattern = $case['preservePattern'];
+            $result->dangerPattern   = $case['dangerPattern'];
             $result->durationMs      = round($durationMs, 3);
 
             $this->judge($result);
@@ -367,6 +376,15 @@ class SecurityTestRunner
                 break;
             case 'PRESERVED':
                 $this->judgePreservation($result, $result->preservePattern);
+                break;
+            case 'REMOVED_WITH_PRESERVE':
+                $this->judgeRemovedWithPreserve($result, $result->dangerPattern, $result->preservePattern);
+                break;
+            case 'TRADEOFF':
+                $this->judgeRemovedWithPreserve($result, $result->dangerPattern, $result->preservePattern);
+                if ($result->verdict === TestVerdict::REMOVED_WITH_PRESERVE) {
+                    $result->reason = '【想定外】データ保持と安全性が両立（TRADEOFFではない可能性）: ' . $result->reason;
+                }
                 break;
             default:
                 $result->verdict = TestVerdict::SKIP;
@@ -515,6 +533,38 @@ class SecurityTestRunner
         }
     }
 
+    /**
+     * REMOVED_WITH_PRESERVE判定: 危険部分の除去と安全データの保持を同時に検証
+     *
+     * dangerPatternが出力に含まれていないこと（除去）と、
+     * preservePatternが出力に含まれていること（保持）を同時に確認する。
+     *
+     * @param TestResult  $result         判定対象
+     * @param string|null $dangerPattern  除去されるべき危険パターン（正規表現）
+     * @param string|null $preservePattern 保持されるべき安全パターン（正規表現）
+     */
+    private function judgeRemovedWithPreserve(TestResult $result, ?string $dangerPattern, ?string $preservePattern): void
+    {
+        if ($dangerPattern === null || $preservePattern === null) {
+            $result->verdict = TestVerdict::SKIP;
+            $result->reason  = 'dangerPatternまたはpreservePatternが未指定';
+            return;
+        }
+        $output = $result->output;
+        $dangerRemoved = !preg_match($dangerPattern, $output);
+        $dataPreserved = (bool) preg_match($preservePattern, $output);
+        if ($dangerRemoved && $dataPreserved) {
+            $result->verdict = TestVerdict::REMOVED_WITH_PRESERVE;
+            $result->reason  = '危険部分が除去され、安全なデータが保持されています';
+        } elseif ($dangerRemoved && !$dataPreserved) {
+            $result->verdict = TestVerdict::TRADEOFF;
+            $result->reason  = '危険部分は除去されましたが、安全なデータも消失しました';
+        } elseif (!$dangerRemoved) {
+            $result->verdict = TestVerdict::NG;
+            $result->reason  = '危険パターンが残存: ' . $dangerPattern;
+        }
+    }
+
     // =========================================================================
     //  レポート出力
     // =========================================================================
@@ -531,10 +581,10 @@ class SecurityTestRunner
         echo "  Tiptap Security Test Report\n";
         echo str_repeat('=', 78) . "\n\n";
 
-        $counts = ['OK' => 0, 'OK*' => 0, 'NG' => 0, 'SKIP' => 0];
+        $counts = ['OK' => 0, 'OK*' => 0, 'NG' => 0, 'SKIP' => 0, 'RWP' => 0, 'TRADE' => 0];
 
         foreach ($this->results as $r) {
-            $verdictDisplay = str_pad($r->verdict, 4);
+            $verdictDisplay = str_pad($r->verdict, 5);
             $idDisplay      = str_pad($r->id, 12);
             $methodDisplay  = str_pad($r->method, 18);
             $timeDisplay    = sprintf('%7.2fms', $r->durationMs);
@@ -552,7 +602,9 @@ class SecurityTestRunner
         echo "OK: {$counts['OK']}  |  ";
         echo "OK*: {$counts['OK*']}  |  ";
         echo "NG: {$counts['NG']}  |  ";
-        echo "SKIP: {$counts['SKIP']}\n";
+        echo "SKIP: {$counts['SKIP']}  |  ";
+        echo "RWP: {$counts['RWP']}  |  ";
+        echo "TRADE: {$counts['TRADE']}\n";
         echo str_repeat('=', 78) . "\n";
     }
 
@@ -579,6 +631,7 @@ class SecurityTestRunner
                 'input'           => mb_convert_encoding($r->input, 'UTF-8', 'UTF-8'),
                 'output'          => mb_convert_encoding($r->output, 'UTF-8', 'UTF-8'),
                 'expectationType' => $r->expectationType,
+                'dangerPattern'   => $r->dangerPattern,
                 'verdict'         => $r->verdict,
                 'reason'          => $r->reason,
                 'durationMs'      => $r->durationMs,
@@ -605,7 +658,7 @@ class SecurityTestRunner
      */
     private function buildSummary(): array
     {
-        $counts = ['OK' => 0, 'OK*' => 0, 'NG' => 0, 'SKIP' => 0];
+        $counts = ['OK' => 0, 'OK*' => 0, 'NG' => 0, 'SKIP' => 0, 'RWP' => 0, 'TRADE' => 0];
 
         foreach ($this->results as $r) {
             if (isset($counts[$r->verdict])) {
@@ -619,6 +672,8 @@ class SecurityTestRunner
             'ok_partial' => $counts['OK*'],
             'ng'    => $counts['NG'],
             'skip'  => $counts['SKIP'],
+            'rwp'   => $counts['RWP'],
+            'trade' => $counts['TRADE'],
         ];
     }
 
