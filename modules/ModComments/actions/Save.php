@@ -65,8 +65,14 @@ class ModComments_Save_Action extends Vtiger_Save_Action {
 	 * @return Vtiger_Record_Model or Module specific Record Model instance
 	 */
 	protected function getRecordModelFromRequest(Vtiger_Request $request) {
+		// 旧実装では getRaw() でcommentcontent/reasontoeditを取得し生HTMLをDBに保存していたが、
+		// これはXSS脆弱性（ストレージ起因）を内包していた。
+		// 現在は親クラスに委譲することで以下の多重防御が適用される:
+		//   1. $request->get() 内の vtlib_purify() （1回目）
+		//   2. RICH_TEXT_FIELDS ループ内の vtlib_purify(decode_html()) （2回目）
+		// HTMLPurifier は冪等性を持つため2重適用によるコンテンツ破壊は発生しない。
+		// decode_html() も HTMLPurifier 出力済みHTMLには実質無効。意図的な defense-in-depth 設計。
 		$recordModel = parent::getRecordModelFromRequest($request);
-
 		return $recordModel;
 	}
 
