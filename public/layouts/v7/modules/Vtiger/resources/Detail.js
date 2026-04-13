@@ -2885,7 +2885,7 @@ Vtiger.Class("Vtiger_Detail_Js",{
 						var commentInfoContent = commentInfoBlock.find('.commentInfoContent');
 						var commentEditStatus = commentInfoBlock.find('[name="editStatus"]');
 						var commentReason = commentInfoBlock.find('[name="editReason"]');
-						commentInfoContent.html(data.commentcontent.replace(/\r?\n/g, '<br>'));
+						commentInfoContent.html(DOMPurify.sanitize(data.commentcontent ? data.commentcontent.replace(/\r?\n/g, '<br>') : ''));
 						commentReason.text(data.reasontoedit);
 						modifiedTime.text(data.modifiedtime);
 						modifiedTime.attr('title',data.modifiedtimetitle)
