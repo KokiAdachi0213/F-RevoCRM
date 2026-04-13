@@ -797,10 +797,14 @@ $htmlEventAttributes = "onerror|onblur|onchange|oncontextmenu|onfocus|oninput|on
 //function to remove script tag and its contents
 function purifyScript($value){
     // HTMLPurifier通過後にscriptタグが残っている時点で異常事態のため、
-    // scriptタグ以降のすべてのコンテンツを信頼できないものとして全削除する（防御の深層化）
-    // Module.php L163のdecode_htmlにより浄化後にエンティティが復元される経路があるため、
-    // エンティティ形式（&lt;script等）も対象に含める
-    $scriptRegex = '/(&.*?lt;|<)script\b[\w\W]*/i';
+    // scriptタグペア（開始〜終了タグ）を削除する（防御の深層化）。
+    // エンティティ形式・リテラル形式の両方に対応。
+    // 属性内の > 文字（例: data-val="a>b"）を誤って開始タグ終端と判断しないよう
+    // クォート文字列を考慮した属性マッチングを使用。
+    // lazy マッチ（*?）により複数の script ブロックを個別に除去。
+    // 注意: 閉じタグのない単独の script タグは削除しない。
+    //        HTMLPurifier 通過後に <script> が残ることは通常ありえないため安全。
+    $scriptRegex = '/(&.*?lt;|<)script\b(?:[^>\'"]|\'[^\']*\'|"[^"]*")*(?:>|&.*?gt;)[\w\W]*?(&.*?lt;|<)\/script\s*(?:>|&.*?gt;)/i';
     $value = preg_replace($scriptRegex, '', $value);
     return $value;
 }
