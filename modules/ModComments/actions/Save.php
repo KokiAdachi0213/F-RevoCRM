@@ -23,7 +23,9 @@ class ModComments_Save_Action extends Vtiger_Save_Action {
 		foreach ($responseFieldsToSent as $fieldName) {
             $fieldModel = $fieldModelList[$fieldName];
             $fieldValue = $recordModel->get($fieldName);
-			$result[$fieldName] = $fieldModel->getDisplayValue(Vtiger_Util_Helper::toSafeHTML($fieldValue));
+			// toSafeHTML(htmlentities)は使わず、vtlib_purify済みのHTMLをそのまま返す
+			// SaveAjax.phpと同じ方針: バックエンドのHTMLPurifierサニタイズを信頼する
+			$result[$fieldName] = $fieldModel->getDisplayValue($fieldValue);
 		}
 
 		$result['success'] = true;
