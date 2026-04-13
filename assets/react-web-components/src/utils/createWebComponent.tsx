@@ -115,7 +115,6 @@ export function createWebComponent(
       const eventProps = this.createEventCallbacks();
       const props = { ...this.props, ...eventProps };
 
-      console.log(`Rendering ${tagName} with props:`, props);
       this.root.render(
         <React.StrictMode>
           <Component {...props} />
