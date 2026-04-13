@@ -2886,7 +2886,7 @@ Vtiger.Class("Vtiger_Detail_Js",{
 						var commentEditStatus = commentInfoBlock.find('[name="editStatus"]');
 						var commentReason = commentInfoBlock.find('[name="editReason"]');
 						commentInfoContent.html(data.commentcontent.replace(/\r?\n/g, '<br>'));
-						commentReason.html(data.reasontoedit);
+						commentReason.text(data.reasontoedit);
 						modifiedTime.text(data.modifiedtime);
 						modifiedTime.attr('title',data.modifiedtimetitle)
 						if(commentEditStatus.hasClass('hide')){

@@ -72,7 +72,7 @@ export const QuickCreateForm: React.FC<QuickCreateFormProps> = ({
                 className={cn(
                   'quickcreate-field',
                   // TextArea・リッチテキストエディタは2カラム幅
-                  (field.uitype === '19' || field.uitype === '20' || field.uitype === '21' || field.isRichTextEditor) && 'md:col-span-2'
+                  (field.uitype === '19' || field.uitype === '20' || field.uitype === '21') && 'md:col-span-2'
                 )}
               >
                 <FieldRenderer

@@ -10,6 +10,12 @@
 
 class Vtiger_Save_Action extends Vtiger_Action_Controller {
 
+	/** リッチテキストエディタフィールド名一覧（XSSサニタイズ対象）。子クラスから static::$RICH_TEXT_FIELDS で参照可能 */
+	protected static $RICH_TEXT_FIELDS = array(
+		'commentcontent', 'notecontent', 'description', 'solution',
+		'question', 'faq_answer', 'signature'
+	);
+
 	public function requiresPermission(\Vtiger_Request $request) {
 		$permissions = parent::requiresPermission($request);
 		$moduleParameter = $request->get('source_module');
@@ -168,10 +174,11 @@ class Vtiger_Save_Action extends Vtiger_Action_Controller {
 			if($fieldDataType == 'time' && $fieldValue !== null){
 				$fieldValue = Vtiger_Time_UIType::getTimeValueWithSeconds($fieldValue);
 			}
-            $richTextFields = array('commentcontent', 'notecontent', 'description', 'solution', 'question', 'faq_answer', 'signature');
+            $richTextFields = static::$RICH_TEXT_FIELDS;
             if((in_array($fieldName, $richTextFields)) && $fieldValue !== null){
                 $purifiedContent = vtlib_purify(decode_html($fieldValue));
-                // Purify malicious html event attributes
+                // vtlib_purify()内でもpurifyHtmlEventAttributes()が実行済みだが、
+                // バイパスリスクへの多重防御（defense-in-depth）として再実行する
                 $fieldValue = purifyHtmlEventAttributes($purifiedContent,true);
 			}
 			if($fieldValue !== null) {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FieldRendererProps, UI_TYPES, FieldValue, HTMLInputValue } from '../types/field';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
@@ -62,6 +62,14 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onChange(field.name, e.target.value);
   };
+
+  // Tiptap用のイベントハンドラー（useCallbackでメモ化）
+  const handleTiptapChange = useCallback(
+    (e: { target: { name: string; value: string } }) => {
+      onChange(e.target.name, e.target.value);
+    },
+    [onChange]
+  );
 
   // datetime-local/time用のイベントハンドラー（秒を除去）
   const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,9 +206,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
       case UI_TYPES.TEXTAREA_LONG:
       case UI_TYPES.TEXTAREA_20:
         if (field.isRichTextEditor) {
-          const handleTiptapChange = (e: { target: { name: string; value: string } }) => {
-            onChange(e.target.name, e.target.value);
-          };
           return (
             <div className={cn('flex flex-col md:flex-row items-start gap-1 md:gap-2', className)}>
               {renderLabel()}
@@ -623,23 +628,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         );
     }
   };
-
-  // エラーハンドリング
-  if (!field) {
-    return (
-      <div className="text-red-600 p-2 border border-red-300 rounded">
-        エラー: フィールド情報が見つかりません
-      </div>
-    );
-  }
-
-  if (!field.uitype) {
-    return (
-      <div className="text-yellow-600 p-2 border border-yellow-300 rounded">
-        警告: UITypeが指定されていません (フィールド: {field.name})
-      </div>
-    );
-  }
 
   try {
     return (

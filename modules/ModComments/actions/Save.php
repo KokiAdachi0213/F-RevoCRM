@@ -16,7 +16,7 @@ class ModComments_Save_Action extends Vtiger_Save_Action {
 		$currentUserModel = Users_Record_Model::getCurrentUserModel();
 		$request->set('assigned_user_id', $currentUserModel->getId());
 		$request->set('userid', $currentUserModel->getId());
-		
+
 		$recordModel = $this->saveRecord($request);
 		$responseFieldsToSent = array('reasontoedit','commentcontent');
 		$fieldModelList = $recordModel->getModule()->getFields();
@@ -35,7 +35,7 @@ class ModComments_Save_Action extends Vtiger_Save_Action {
 		$response->setResult($result);
 		$response->emit();
 	}
-	
+
 	/**
 	 * Function to save record
 	 * @param <Vtiger_Request> $request - values of the record
@@ -56,7 +56,7 @@ class ModComments_Save_Action extends Vtiger_Save_Action {
 		}
 		return $recordModel;
 	}
-	
+
 	/**
 	 * Function to get the record model based on the request parameters
 	 * @param Vtiger_Request $request
@@ -64,11 +64,8 @@ class ModComments_Save_Action extends Vtiger_Save_Action {
 	 */
 	protected function getRecordModelFromRequest(Vtiger_Request $request) {
 		$recordModel = parent::getRecordModelFromRequest($request);
-		
-		$recordModel->set('commentcontent', $request->getRaw('commentcontent'));
-		$recordModel->set('reasontoedit', $request->getRaw('reasontoedit'));
 
 		return $recordModel;
 	}
-	
+
 }

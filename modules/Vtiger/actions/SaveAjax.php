@@ -153,7 +153,7 @@ class Vtiger_SaveAjax_Action extends Vtiger_Save_Action {
 	}
     
     public function purifyRichTextField($fieldName, $fieldValue) {
-        $richTextFields = array('commentcontent', 'notecontent', 'signature', 'description', 'solution', 'question', 'faq_answer');
+        $richTextFields = static::$RICH_TEXT_FIELDS;
         if((in_array($fieldName, $richTextFields)) && $fieldValue !== null){
             $purifiedContent = vtlib_purify(decode_html($fieldValue));
             // Purify malicious html event attributes

@@ -399,14 +399,35 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
       if (!sourceMode) {
         setSourceHtml(formatHtml(editor.getHTML()));
       } else {
-        editor.commands.setContent(sourceHtml, { emitUpdate: true });
-        setContent(sourceHtml);
+        // ソース内容をエディタのスキーマでフィルタリングしてからonChangeに渡す
+        editor.commands.setContent(sourceHtml, { emitUpdate: false });
+        const filteredHtml = editor.getHTML(); // スキーマフィルタ済みHTML
+
+        // タグ除去をTiptap正規化（属性順序変更等）と区別するためDOMParserでタグ名セット比較
+        const parseBefore = new DOMParser().parseFromString(sourceHtml, 'text/html');
+        const tagsBefore = new Set(
+          Array.from(parseBefore.querySelectorAll('*')).map(el => el.tagName.toLowerCase())
+        );
+        const parseAfter = new DOMParser().parseFromString(filteredHtml, 'text/html');
+        const tagsAfter = new Set(
+          Array.from(parseAfter.querySelectorAll('*')).map(el => el.tagName.toLowerCase())
+        );
+        // DOMParserが自動生成するタグは除外
+        const ignoredTags = new Set(['html', 'head', 'body']);
+        const removedTags = [...tagsBefore].filter(t => !tagsAfter.has(t) && !ignoredTags.has(t));
+
+        if (removedTags.length > 0) {
+          // バックエンドサニタイズが主要軽減策だが、UXとして警告を記録
+          console.warn('[Tiptap] 非サポートタグがエディタスキーマにより除去されました:', removedTags);
+        }
+
+        setContent(filteredHtml);
         if (onChange) {
           const tmp = document.createElement("div");
-          tmp.innerHTML = sourceHtml;
+          tmp.innerHTML = filteredHtml;
           const text = (tmp.textContent || "").trim();
           onChange({
-            target: { name, value: text === "" ? "" : sourceHtml },
+            target: { name, value: text === "" ? "" : filteredHtml },
           });
         }
       }
@@ -417,17 +438,11 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const html = e.target.value;
         setSourceHtml(html);
-        setContent(html);
-        if (onChange) {
-          const tmp = document.createElement("div");
-          tmp.innerHTML = html;
-          const text = (tmp.textContent || "").trim();
-          onChange({
-            target: { name, value: text === "" ? "" : html },
-          });
-        }
+        // ソースモード中はローカル状態のみ更新
+        // onChangeはソースモード終了時（toggleSourceMode）にスキーマフィルタ済みHTMLで発火する
       },
-      [onChange, name]
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      []
     );
 
     const FONT_SIZE_DROPDOWN_MIN_HEIGHT = 100; // 少なくとも2〜3項目を表示するための最低高

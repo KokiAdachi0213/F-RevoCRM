@@ -37,7 +37,7 @@ const ResizableImageComponent = ({
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     },
-    [updateAttributes]
+    [updateAttributes, node]
   );
 
   const width = node.attrs.width as number | null;

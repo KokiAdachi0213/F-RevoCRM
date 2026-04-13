@@ -720,6 +720,8 @@ function vtlib_purify($input, $ignore = false) {
                 }
             } else { // Simple type
                 $value = $__htmlpurifier_instance->purify($input);
+                // HTMLPurifier処理後の追加防御として purifyHtmlEventAttributes() を再呼び出し
+                // （Save.php側でも外側で再呼び出しされているが、これは意図的な多重防御設計）
                 $value = purifyHtmlEventAttributes($value, true);
             }
         }
