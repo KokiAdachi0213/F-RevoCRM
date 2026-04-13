@@ -113,7 +113,6 @@ class Vtiger_SaveAjax_Action extends Vtiger_Save_Action {
 					}
 					$recordModel->set($fieldName, $fieldValue);
 				}
-				$recordModel->set($fieldName, $fieldValue);
 				if($fieldName === 'contact_id' && isRecordExists($fieldValue)) {
 					$contactRecord = Vtiger_Record_Model::getInstanceById($fieldValue, 'Contacts');
 					$recordModel->set("relatedContact",$contactRecord);
