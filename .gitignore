@@ -44,3 +44,9 @@ compose.override.yaml
 /public/resources/web-components/*
 !/public/resources/web-components/.gitkeep
 /assets/react-web-components/coverage/*
+/assets/react-web-components/test/
+/assets/react-web-components/test-results/
+
+# AI tools
+.codex
+.metaswarm
