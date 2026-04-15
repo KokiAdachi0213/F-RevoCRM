@@ -2,7 +2,7 @@ import { createWebComponent } from "@/utils/createWebComponent";
 import "./index.css";
 import { QuickCreate, CalendarQuickCreate } from "@/components/QuickCreate";
 import { AppMenu } from "@/components/AppMenu";
-import Tiptap from "@/components/ui/tiptap/tiptap";
+import { TiptapWithTranslation } from "@/components/ui/tiptap/TiptapWithTranslation";
 
 // QuickCreate本体コンポーネントの登録
 // イベント: save, cancel, go-to-full-form, open-change (CustomEvent)
@@ -45,8 +45,9 @@ createWebComponent(
 createWebComponent(AppMenu, "app-menu", ["app-menus"]);
 
 // RichTextEditor コンポーネントの登録
+// TranslationProvider でラップして多言語対応（GetTranslations API: module=Vtiger）
 // colors属性: JSON配列でカラーパレットを指定可能（省略時はデフォルトパレット）
 // 使用例（HTML）:
 // <rich-text-editor value="Hello, world!"></rich-text-editor>
 // <rich-text-editor value="" colors='["#000","#F00","#0F0","#00F"]'></rich-text-editor>
-createWebComponent(Tiptap, "rich-text-editor", ["value", "name", "className", "colors"], ["onChange"]);
+createWebComponent(TiptapWithTranslation, "rich-text-editor", ["value", "name", "className", "colors"], ["onChange"]);
