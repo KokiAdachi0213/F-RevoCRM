@@ -10,6 +10,7 @@ import {
 interface ColorPickerProps {
   icon: React.ReactNode;
   title: string;
+  clearLabel: string;
   currentColor: string;
   palette: string[];
   columns?: number;
@@ -21,6 +22,7 @@ interface ColorPickerProps {
 export const ColorPicker = ({
   icon,
   title,
+  clearLabel,
   currentColor,
   palette,
   columns = 6,
@@ -80,7 +82,7 @@ export const ColorPicker = ({
         }}
       >
         <RemoveFormatting size={12} />
-        <span>クリア</span>
+        <span>{clearLabel}</span>
       </button>
     </DropdownMenuContent>
     </DropdownMenuPortal>

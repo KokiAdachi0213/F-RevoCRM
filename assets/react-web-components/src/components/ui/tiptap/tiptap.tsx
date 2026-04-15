@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import Heading from "@tiptap/extension-heading";
 import Underline from "@tiptap/extension-underline";
 import Subscript from "@tiptap/extension-subscript";
@@ -74,12 +74,13 @@ import { ColorPicker } from "./components/color-picker";
 import { TEXT_COLORS, HIGHLIGHT_COLORS } from "./constants";
 import { formatHtml } from "./utils";
 import "./tiptap.css";
+import { useOptionalTranslation } from '../../../hooks/useTranslation';
 
 /* ================================================================
  * メインコンポーネント
  * ================================================================ */
 
-interface TiptapProps {
+export interface TiptapProps {
   value?: string;
   onChange?: (event: { target: { name: string; value: string } }) => void;
   name?: string;
@@ -99,6 +100,7 @@ interface BlockTypeOption {
 
 const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
   ({ value = "", onChange, name = "", className = "", colors, isQuickCreate }, ref) => {
+    const { t } = useOptionalTranslation();
     const [content, setContent] = useState(value || TiptapInitialValue);
     const [sourceMode, setSourceMode] = useState(false);
     const [sourceHtml, setSourceHtml] = useState("");
@@ -261,7 +263,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
     );
 
     useEffect(() => {
-      if (editor && value !== editor.getHTML()) {
+      if (editor && value !== editor.getHTML().replace(/\u200B/g, "")) {
         editor.commands.setContent(value || TiptapInitialValue);
         setContent(value || TiptapInitialValue);
       }
@@ -288,35 +290,35 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
       };
     }, []);
 
-    const blockTypeOptions: BlockTypeOption[] = [
+    const blockTypeOptions: BlockTypeOption[] = useMemo(() => [
       {
-        label: "段落",
+        label: t('LBL_TIPTAP_PARAGRAPH'),
         value: "paragraph",
         icon: Pilcrow,
         onClick: () => editor?.chain().focus().setParagraph().run(),
       },
       {
-        label: "見出し1",
+        label: t('LBL_TIPTAP_HEADING1'),
         value: "h1",
         icon: Heading1,
         onClick: () =>
           editor?.chain().focus().toggleHeading({ level: 1 }).run(),
       },
       {
-        label: "見出し2",
+        label: t('LBL_TIPTAP_HEADING2'),
         value: "h2",
         icon: Heading2,
         onClick: () =>
           editor?.chain().focus().toggleHeading({ level: 2 }).run(),
       },
       {
-        label: "見出し3",
+        label: t('LBL_TIPTAP_HEADING3'),
         value: "h3",
         icon: Heading3,
         onClick: () =>
           editor?.chain().focus().toggleHeading({ level: 3 }).run(),
       },
-    ];
+    ], [editor, t]);
 
     const handleImageUpload = useCallback(() => {
       const input = document.createElement("input");
@@ -361,10 +363,13 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
     // （setFontSize は selection.empty 時に ZWS を挿入する副作用があるため）
     const handleBulletListToggle = useCallback(() => {
       if (!editor) return;
-      const preColor     = editor.getAttributes("textStyle")?.color as string | undefined;
-      const preFontSize  = editor.getAttributes("textStyle")?.fontSize as string | undefined;
-      const preHighlight = editor.getAttributes("highlight")?.color as string | undefined;
+      const isEmptySelection = editor.state.selection.empty;
+      const preColor     = isEmptySelection ? editor.getAttributes("textStyle")?.color as string | undefined : undefined;
+      const preFontSize  = isEmptySelection ? editor.getAttributes("textStyle")?.fontSize as string | undefined : undefined;
+      const preHighlight = isEmptySelection ? editor.getAttributes("highlight")?.color as string | undefined : undefined;
       const chain = editor.chain().focus().toggleBulletList();
+      // storedMarks保持はカーソルのみ（空選択）の場合に限定
+      // テキスト選択中は既存の混在書式を維持する
       if (preColor)     chain.setColor(preColor);
       if (preFontSize)  chain.setMark("textStyle", { fontSize: preFontSize });
       if (preHighlight) chain.setHighlight({ color: preHighlight });
@@ -373,9 +378,10 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
 
     const handleOrderedListToggle = useCallback(() => {
       if (!editor) return;
-      const preColor     = editor.getAttributes("textStyle")?.color as string | undefined;
-      const preFontSize  = editor.getAttributes("textStyle")?.fontSize as string | undefined;
-      const preHighlight = editor.getAttributes("highlight")?.color as string | undefined;
+      const isEmptySelection = editor.state.selection.empty;
+      const preColor     = isEmptySelection ? editor.getAttributes("textStyle")?.color as string | undefined : undefined;
+      const preFontSize  = isEmptySelection ? editor.getAttributes("textStyle")?.fontSize as string | undefined : undefined;
+      const preHighlight = isEmptySelection ? editor.getAttributes("highlight")?.color as string | undefined : undefined;
       const chain = editor.chain().focus().toggleOrderedList();
       if (preColor)     chain.setColor(preColor);
       if (preFontSize)  chain.setMark("textStyle", { fontSize: preFontSize });
@@ -397,11 +403,13 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
     const toggleSourceMode = useCallback(() => {
       if (!editor) return;
       if (!sourceMode) {
-        setSourceHtml(formatHtml(editor.getHTML()));
+        // ソースモード突入時: ZWS（フォントサイズ変更時の副作用）を除去してから表示
+        setSourceHtml(formatHtml(editor.getHTML().replace(/\u200B/g, '')));
       } else {
         // ソース内容をエディタのスキーマでフィルタリングしてからonChangeに渡す
         editor.commands.setContent(sourceHtml, { emitUpdate: false });
-        const filteredHtml = editor.getHTML(); // スキーマフィルタ済みHTML
+        // スキーマフィルタ済みHTML（ZWSも除去）
+        const filteredHtml = editor.getHTML().replace(/\u200B/g, '');
 
         // タグ除去をTiptap正規化（属性順序変更等）と区別するためDOMParserでタグ名セット比較
         const parseBefore = new DOMParser().parseFromString(sourceHtml, 'text/html');
@@ -577,9 +585,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
               {isMobile ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 4, padding: 6 }}>
                   {FONT_SIZES.map((fs) => {
-                    const cur =
-                      (editor?.getAttributes("textStyle")?.fontSize as string) ||
-                      "14px";
+                    const cur = editorToolbarState?.fontSize ?? "14px";
                     return (
                       <DropdownMenuItem
                         key={fs.value}
@@ -606,9 +612,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
                 </div>
               ) : (
                 FONT_SIZES.map((fs) => {
-                  const cur =
-                    (editor?.getAttributes("textStyle")?.fontSize as string) ||
-                    "14px";
+                  const cur = editorToolbarState?.fontSize ?? "14px";
                   return (
                     <DropdownMenuItem
                       key={fs.value}
@@ -642,7 +646,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isBold ? "active" : ""}`}
-            title="太字"
+            title={t('LBL_TIPTAP_BOLD')}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleBold().run()
@@ -654,7 +658,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isItalic ? "active" : ""}`}
-            title="斜体"
+            title={t('LBL_TIPTAP_ITALIC')}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleItalic().run()
@@ -666,7 +670,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isUnderline ? "active" : ""}`}
-            title="下線"
+            title={t('LBL_TIPTAP_UNDERLINE')}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleUnderline().run()
@@ -678,7 +682,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isStrike ? "active" : ""}`}
-            title="取り消し線"
+            title={t('LBL_TIPTAP_STRIKETHROUGH')}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleStrike().run()
@@ -693,7 +697,8 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           {/* Colors */}
           <ColorPicker
             icon={<Type size={14} />}
-            title="文字色"
+            title={t('LBL_TIPTAP_TEXT_COLOR')}
+            clearLabel={t('LBL_TIPTAP_CLEAR')}
             currentColor={currentTextColor}
             palette={textPalette}
             columns={10}
@@ -703,7 +708,8 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           />
           <ColorPicker
             icon={<Highlighter size={14} />}
-            title="背景色"
+            title={t('LBL_TIPTAP_HIGHLIGHT_COLOR')}
+            clearLabel={t('LBL_TIPTAP_CLEAR')}
             currentColor={currentHighlight}
             palette={highlightPalette}
             columns={7}
@@ -720,7 +726,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isBulletList ? "active" : ""}`}
-            title="箇条書きリスト"
+            title={t('LBL_TIPTAP_BULLET_LIST')}
             onMouseDown={(e) => handleAction(e, handleBulletListToggle)}
           >
             <List size={14} />
@@ -728,7 +734,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isOrderedList ? "active" : ""}`}
-            title="番号付きリスト"
+            title={t('LBL_TIPTAP_ORDERED_LIST')}
             onMouseDown={(e) => handleAction(e, handleOrderedListToggle)}
           >
             <ListOrdered size={14} />
@@ -736,7 +742,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className="tiptap-btn"
-            title="インデントを増やす"
+            title={t('LBL_TIPTAP_INDENT_INCREASE')}
             onMouseDown={(e) => handleAction(e, handleIndent)}
           >
             <Indent size={14} />
@@ -744,7 +750,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className="tiptap-btn"
-            title="インデントを減らす"
+            title={t('LBL_TIPTAP_INDENT_DECREASE')}
             onMouseDown={(e) => handleAction(e, handleOutdent)}
           >
             <Outdent size={14} />
@@ -756,7 +762,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isBlockquote ? "active" : ""}`}
-            title="引用"
+            title={t('LBL_TIPTAP_BLOCKQUOTE')}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleBlockquote().run()
@@ -770,7 +776,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className="tiptap-btn"
-            title="画像を挿入"
+            title={t('LBL_TIPTAP_INSERT_IMAGE')}
             onMouseDown={(e) => {
               e.preventDefault();
               handleImageUpload();
@@ -783,7 +789,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className="tiptap-btn"
-            title="テーブルを挿入"
+            title={t('LBL_TIPTAP_INSERT_TABLE')}
             onMouseDown={(e) => {
               e.preventDefault();
               editor
@@ -802,7 +808,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className="tiptap-btn"
-            title="書式をクリア"
+            title={t('LBL_TIPTAP_CLEAR_FORMAT')}
             disabled={sourceMode}
             onMouseDown={(e) =>
               handleAction(e, () =>
@@ -819,7 +825,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <button
             type="button"
             className={`tiptap-btn ${sourceMode ? "active" : ""}`}
-            title="HTMLソース編集"
+            title={t('LBL_TIPTAP_SOURCE_EDIT')}
             onMouseDown={(e) => {
               e.preventDefault();
               toggleSourceMode();
