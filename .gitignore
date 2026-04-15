@@ -25,11 +25,11 @@ test/vtlib/URI/*
 test/vtlib/HTML/*
 user_privileges/*
 !user_privileges/sharing_privileges_1.php
-!user_privileges/user_privileges_1.php
 !user_privileges/audit_trail.php
 !user_privileges/default_module_view.php
 !user_privileges/enable_backup.php
 !user_privileges/index.html
+tabdata.php
 config.inc.php
 /*.xlsx
 .DS_Store
@@ -37,6 +37,11 @@ config.inc.php
 compose.override.yaml
 .env
 /vendor
+/node_modules
+
+# logo files
+/public/logo/OLDfrevocrm-logo.png
+/public/logo/GitHublogo.png
 
 # for react-web-components
 /assets/react-web-components/node_modules
