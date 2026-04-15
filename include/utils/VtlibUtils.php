@@ -707,6 +707,22 @@ function vtlib_purify($input, $ignore = false) {
             $def = $config->getHTMLDefinition(true);
             if ($def) {
                 $def->addAttribute('span', 'data-color', 'Text');
+
+                // Tiptap拡張が出力するHTML要素・属性をHTMLPurifierに許可
+                // anchor拡張: <a id="..." name="...">
+                $def->addAttribute('a', 'name', 'CDATA');
+                // dir-attribute拡張: dir属性（ltr/rtl）
+                $def->addAttribute('p', 'dir', 'Enum#ltr,rtl');
+                $def->addAttribute('div', 'dir', 'Enum#ltr,rtl');
+                // big/small拡張
+                $def->addElement('big', 'Inline', 'Inline', 'Common');
+                $def->addElement('small', 'Inline', 'Inline', 'Common');
+                // address拡張
+                $def->addElement('address', 'Block', 'Inline', 'Common');
+                // kbd拡張
+                $def->addElement('kbd', 'Inline', 'Inline', 'Common');
+                // marker拡張: <span class="marker ...">
+                $def->addAttribute('span', 'class', 'CDATA');
             }
 
             $__htmlpurifier_instance = new HTMLPurifier($config);
@@ -835,7 +851,12 @@ function purifyJavascriptAlert($value){
                 * so skipping the validation and reseting the value - TODO
                 */
                if (preg_last_error() == PREG_BACKTRACK_LIMIT_ERROR) {
-                   $value = $originalValue;
+                   // fail-closed: 正規表現が失敗した場合、対象タグを安全な形に置換する
+                   // （元入力をそのまま返すfail-openはXSSリスクがあるため）
+                   $value = preg_replace('/(&.*?lt;|<)'.$tag.'[^>]*?(>|&.*?gt;)/i', "<$tag>", $value);
+                   if ($value === null) {
+                       $value = $originalValue;
+                   }
                    return $value;
                }
             }        
