@@ -2329,4 +2329,26 @@ $jsLanguageStrings = array(
 	// Actions
 	'JS_EDIT' => 'Edit',
 	'JS_DELETE' => 'Delete',
+
+	// Tiptap editor toolbar
+	'LBL_TIPTAP_PARAGRAPH'       => 'Paragraph',
+	'LBL_TIPTAP_HEADING1'        => 'Heading 1',
+	'LBL_TIPTAP_HEADING2'        => 'Heading 2',
+	'LBL_TIPTAP_HEADING3'        => 'Heading 3',
+	'LBL_TIPTAP_BOLD'            => 'Bold',
+	'LBL_TIPTAP_ITALIC'          => 'Italic',
+	'LBL_TIPTAP_UNDERLINE'       => 'Underline',
+	'LBL_TIPTAP_STRIKETHROUGH'   => 'Strikethrough',
+	'LBL_TIPTAP_TEXT_COLOR'      => 'Text Color',
+	'LBL_TIPTAP_HIGHLIGHT_COLOR' => 'Highlight Color',
+	'LBL_TIPTAP_BULLET_LIST'     => 'Bullet List',
+	'LBL_TIPTAP_ORDERED_LIST'    => 'Ordered List',
+	'LBL_TIPTAP_INDENT_INCREASE' => 'Increase Indent',
+	'LBL_TIPTAP_INDENT_DECREASE' => 'Decrease Indent',
+	'LBL_TIPTAP_BLOCKQUOTE'      => 'Blockquote',
+	'LBL_TIPTAP_INSERT_IMAGE'    => 'Insert Image',
+	'LBL_TIPTAP_INSERT_TABLE'    => 'Insert Table',
+	'LBL_TIPTAP_CLEAR_FORMAT'    => 'Clear Formatting',
+	'LBL_TIPTAP_SOURCE_EDIT'     => 'Edit HTML Source',
+	'LBL_TIPTAP_CLEAR'           => 'Clear',
 );
