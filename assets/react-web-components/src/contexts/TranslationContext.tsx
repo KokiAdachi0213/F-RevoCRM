@@ -81,6 +81,28 @@ const DEFAULT_TRANSLATIONS: TranslationData = {
   // オプション関連
   LBL_NO_OPTIONS_AVAILABLE: '該当する選択肢がありません',
   LBL_ALL_OPTIONS_SELECTED: 'すべて選択済みです',
+
+  // Tiptap エディタ ツールバー（フォールバック用日本語）
+  LBL_TIPTAP_PARAGRAPH: '段落',
+  LBL_TIPTAP_HEADING1: '見出し1',
+  LBL_TIPTAP_HEADING2: '見出し2',
+  LBL_TIPTAP_HEADING3: '見出し3',
+  LBL_TIPTAP_BOLD: '太字',
+  LBL_TIPTAP_ITALIC: '斜体',
+  LBL_TIPTAP_UNDERLINE: '下線',
+  LBL_TIPTAP_STRIKETHROUGH: '取り消し線',
+  LBL_TIPTAP_TEXT_COLOR: '文字色',
+  LBL_TIPTAP_HIGHLIGHT_COLOR: '背景色',
+  LBL_TIPTAP_BULLET_LIST: '箇条書きリスト',
+  LBL_TIPTAP_ORDERED_LIST: '番号付きリスト',
+  LBL_TIPTAP_INDENT_INCREASE: 'インデントを増やす',
+  LBL_TIPTAP_INDENT_DECREASE: 'インデントを減らす',
+  LBL_TIPTAP_BLOCKQUOTE: '引用',
+  LBL_TIPTAP_INSERT_IMAGE: '画像を挿入',
+  LBL_TIPTAP_INSERT_TABLE: 'テーブルを挿入',
+  LBL_TIPTAP_CLEAR_FORMAT: '書式をクリア',
+  LBL_TIPTAP_SOURCE_EDIT: 'HTMLソース編集',
+  LBL_TIPTAP_CLEAR: 'クリア',
 };
 
 interface TranslationContextValue {
