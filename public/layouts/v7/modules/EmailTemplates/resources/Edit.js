@@ -16,7 +16,7 @@ Vtiger_Edit_Js("EmailTemplates_Edit_Js",{},{
 		var templateContentElement = jQuery("#templatecontent");
 		if(templateContentElement.length > 0) {
 			if(jQuery('#EditView').find('.isSystemTemplate').val() == 1) {
-				templateContentElement.removeAttr('data-validation-engine').addClass('richTextEditorSource');
+				templateContentElement.removeAttr('data-validation-engine');
 			}
             var customConfig = {
                 "height":"600px"

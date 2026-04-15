@@ -16,7 +16,7 @@ Vtiger_Edit_Js("PDFTemplates_Edit_Js",{},{
 		var templateContentElement = jQuery("#templatecontent");
 		if(templateContentElement.length > 0) {
 			if(jQuery('#EditView').find('.isSystemTemplate').val() == 1) {
-				templateContentElement.removeAttr('data-validation-engine').addClass('richTextEditorSource');
+				templateContentElement.removeAttr('data-validation-engine');
 			}
 			if ($("[name='is_headlesschrome']").val() == "true") {
 				var customConfig = {

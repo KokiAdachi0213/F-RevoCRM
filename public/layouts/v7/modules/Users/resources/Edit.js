@@ -100,15 +100,7 @@ Vtiger_Edit_Js("Users_Edit_Js",{},{
 		var templateContentElement = jQuery("#Users_editView_fieldName_signature");
 		if(templateContentElement.length > 0) {
 			var richTextEditorInstance = new Vtiger_RichTextEditor_Js();
-			//Customized toolbar configuration for RichTextEditor
-			//to support basic operations
-			var customConfig = {
-				toolbar: [
-					{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup','align','list', 'indent','colors' ,'links'], items: [ 'Bold', 'Italic', 'Underline', '-','TextColor', 'BGColor' ,'-','JustifyLeft', 'JustifyCenter', 'JustifyRight', '-', 'NumberedList', 'BulletedList','-', 'Link', 'Unlink','Image','-','RemoveFormat'] },
-					{ name: 'styles', items: ['Font', 'FontSize' ] },
-                    {name: 'document', items:['Source']}
-				]};
-			richTextEditorInstance.loadRichTextEditor(templateContentElement,customConfig);
+			richTextEditorInstance.loadRichTextEditor(templateContentElement);
 		}
 	},
 	

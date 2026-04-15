@@ -132,7 +132,7 @@ Vtiger_Index_Js("Vtiger_Edit_Js",{
 	
 	addFieldRichTextEditor : function ( element ) {
 		if(element.length > 0){
-			element.removeAttr('data-validation-engine').addClass('richTextEditorSource');
+			element.removeAttr('data-validation-engine');
 			var richTextEditorInstance = new Vtiger_RichTextEditor_Js();
 			richTextEditorInstance.loadRichTextEditor(element);
 		}

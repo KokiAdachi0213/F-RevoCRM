@@ -79,6 +79,12 @@ jQuery.Class("Vtiger_RichTextEditor_Js",{},{
 		rteElement.setAttribute('value', initialValue);
 		rteElement.setAttribute('name', elementName);
 
+		// customConfigのheight指定をWeb Componentに反映
+		if (customConfig && customConfig.height) {
+			var h = customConfig.height;
+			rteElement.style.height = (typeof h === 'number') ? h + 'px' : h;
+		}
+
 		rteElement.addEventListener('change', function(e) {
 			if (e.detail && e.detail.target) {
 				element.val(e.detail.target.value);
