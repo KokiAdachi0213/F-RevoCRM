@@ -38,12 +38,12 @@ describe('createWebComponent - ホスト要素スタイル', () => {
     expect(el.style.maxWidth).toBe('100%');
   });
 
-  it('connectedCallback後にoverflowがhiddenになること', async () => {
-    const el = document.createElement(TAG_NAME);
-    document.body.appendChild(el);
-    await customElements.whenDefined(TAG_NAME);
-    expect(el.style.overflow).toBe('hidden');
-  });
+  // NOTE: 'connectedCallback後にoverflowがhiddenになること' テストは削除済み（2026-04-14）
+  // 削除理由:
+  //   CSS `.tiptap-editor-content { overflow: hidden }` でコンテンツエリアを制御済み。
+  //   ツールバーは flex-wrap:wrap（デスクトップ）/ overflow-x:auto（モバイル）で対応。
+  //   ホスト要素へのインラインスタイル追加は上記CSSと重複するため不要と判断。
+  //   （CTO確認済み: 2026-04-14）
 
   it('connectedCallback後にboxSizingがborder-boxになること', async () => {
     const el = document.createElement(TAG_NAME);
