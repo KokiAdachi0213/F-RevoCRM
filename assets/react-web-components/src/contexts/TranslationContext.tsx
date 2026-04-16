@@ -103,13 +103,6 @@ const DEFAULT_TRANSLATIONS: TranslationData = {
   LBL_TIPTAP_CLEAR_FORMAT: '書式をクリア',
   LBL_TIPTAP_SOURCE_EDIT: 'HTMLソース編集',
   LBL_TIPTAP_CLEAR: 'クリア',
-  // Tiptap ツールバー（Sub/Sup/TextAlign）
-  LBL_TIPTAP_SUBSCRIPT: '下付き文字',
-  LBL_TIPTAP_SUPERSCRIPT: '上付き文字',
-  LBL_TIPTAP_ALIGN_LEFT: '左揃え',
-  LBL_TIPTAP_ALIGN_CENTER: '中央揃え',
-  LBL_TIPTAP_ALIGN_RIGHT: '右揃え',
-  LBL_TIPTAP_ALIGN_JUSTIFY: '両端揃え',
   // Tiptap テーブルバブルメニュー
   LBL_TIPTAP_TABLE_ADD_ROW_BEFORE: '行を追加（上）',
   LBL_TIPTAP_TABLE_ROW_UP: '行↑',

@@ -2351,13 +2351,6 @@ $jsLanguageStrings = array(
 	'LBL_TIPTAP_CLEAR_FORMAT'    => 'Clear Formatting',
 	'LBL_TIPTAP_SOURCE_EDIT'     => 'Edit HTML Source',
 	'LBL_TIPTAP_CLEAR'           => 'Clear',
-	// Tiptap editor toolbar (Subscript/Superscript/TextAlign)
-	'LBL_TIPTAP_SUBSCRIPT'             => 'Subscript',
-	'LBL_TIPTAP_SUPERSCRIPT'           => 'Superscript',
-	'LBL_TIPTAP_ALIGN_LEFT'            => 'Align Left',
-	'LBL_TIPTAP_ALIGN_CENTER'          => 'Align Center',
-	'LBL_TIPTAP_ALIGN_RIGHT'           => 'Align Right',
-	'LBL_TIPTAP_ALIGN_JUSTIFY'         => 'Justify',
 	// Tiptap table bubble menu
 	'LBL_TIPTAP_TABLE_ADD_ROW_BEFORE'  => 'Add Row Above',
 	'LBL_TIPTAP_TABLE_ROW_UP'          => 'Row ↑',

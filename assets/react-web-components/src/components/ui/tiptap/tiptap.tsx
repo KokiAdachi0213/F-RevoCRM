@@ -37,12 +37,6 @@ import {
   ImagePlus,
   Code,
   TableIcon,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignJustify,
-  Subscript as SubscriptIcon,    // Tiptap 拡張 Subscript と名前衝突のためエイリアス
-  Superscript as SuperscriptIcon, // 同上
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -236,9 +230,6 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           isBold: false, isItalic: false, isUnderline: false, isStrike: false,
           isBulletList: false, isOrderedList: false, isBlockquote: false,
           blockType: "paragraph" as BlockType,
-          isSubscript: false, isSuperscript: false,
-          isAlignLeft: false, isAlignCenter: false,
-          isAlignRight: false, isAlignJustify: false,
         };
         return {
           // 既存フィールド: フォントサイズ・文字色・ハイライト
@@ -259,12 +250,6 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             : e.isActive("heading", { level: 3 }) ? "h3"
             : "paragraph"
           ) as BlockType,
-          isSubscript:    e.isActive("subscript"),
-          isSuperscript:  e.isActive("superscript"),
-          isAlignLeft:    e.isActive({ textAlign: "left" }),
-          isAlignCenter:  e.isActive({ textAlign: "center" }),
-          isAlignRight:   e.isActive({ textAlign: "right" }),
-          isAlignJustify: e.isActive({ textAlign: "justify" }),
         };
       },
     });
@@ -710,32 +695,6 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           >
             <Strikethrough size={14} />
           </button>
-          <button
-            type="button"
-            className={`tiptap-btn ${editorToolbarState?.isSubscript ? "active" : ""}`}
-            title={t('LBL_TIPTAP_SUBSCRIPT')}
-            aria-pressed={editorToolbarState?.isSubscript ?? false}
-            onMouseDown={(e) =>
-              handleAction(e, () =>
-                editor?.chain().focus().toggleSubscript().run()
-              )
-            }
-          >
-            <SubscriptIcon size={14} />
-          </button>
-          <button
-            type="button"
-            className={`tiptap-btn ${editorToolbarState?.isSuperscript ? "active" : ""}`}
-            title={t('LBL_TIPTAP_SUPERSCRIPT')}
-            aria-pressed={editorToolbarState?.isSuperscript ?? false}
-            onMouseDown={(e) =>
-              handleAction(e, () =>
-                editor?.chain().focus().toggleSuperscript().run()
-              )
-            }
-          >
-            <SuperscriptIcon size={14} />
-          </button>
 
           <div className="tiptap-separator" />
 
@@ -764,62 +723,6 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             onClear={() => editor?.chain().focus().unsetHighlight().run()}
             portalContainer={portalContainerRef.current}
           />
-
-          <div className="tiptap-separator" />
-
-          {/* Text alignment */}
-          <button
-            type="button"
-            className={`tiptap-btn ${editorToolbarState?.isAlignLeft ? "active" : ""}`}
-            title={t('LBL_TIPTAP_ALIGN_LEFT')}
-            aria-pressed={editorToolbarState?.isAlignLeft ?? false}
-            onMouseDown={(e) =>
-              handleAction(e, () =>
-                editor?.chain().focus().setTextAlign("left").run()
-              )
-            }
-          >
-            <AlignLeft size={14} />
-          </button>
-          <button
-            type="button"
-            className={`tiptap-btn ${editorToolbarState?.isAlignCenter ? "active" : ""}`}
-            title={t('LBL_TIPTAP_ALIGN_CENTER')}
-            aria-pressed={editorToolbarState?.isAlignCenter ?? false}
-            onMouseDown={(e) =>
-              handleAction(e, () =>
-                editor?.chain().focus().setTextAlign("center").run()
-              )
-            }
-          >
-            <AlignCenter size={14} />
-          </button>
-          <button
-            type="button"
-            className={`tiptap-btn ${editorToolbarState?.isAlignRight ? "active" : ""}`}
-            title={t('LBL_TIPTAP_ALIGN_RIGHT')}
-            aria-pressed={editorToolbarState?.isAlignRight ?? false}
-            onMouseDown={(e) =>
-              handleAction(e, () =>
-                editor?.chain().focus().setTextAlign("right").run()
-              )
-            }
-          >
-            <AlignRight size={14} />
-          </button>
-          <button
-            type="button"
-            className={`tiptap-btn ${editorToolbarState?.isAlignJustify ? "active" : ""}`}
-            title={t('LBL_TIPTAP_ALIGN_JUSTIFY')}
-            aria-pressed={editorToolbarState?.isAlignJustify ?? false}
-            onMouseDown={(e) =>
-              handleAction(e, () =>
-                editor?.chain().focus().setTextAlign("justify").run()
-              )
-            }
-          >
-            <AlignJustify size={14} />
-          </button>
 
           <div className="tiptap-separator" />
 
