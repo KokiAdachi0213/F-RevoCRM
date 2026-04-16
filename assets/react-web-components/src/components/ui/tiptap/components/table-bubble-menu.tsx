@@ -12,12 +12,15 @@ import {
   RemoveFormatting,
 } from "lucide-react";
 import { CELL_BG_COLORS } from "../constants";
+import { useOptionalTranslation } from '../../../../hooks/useTranslation';
 
 interface TableBubbleMenuProps {
   editor: Editor;
 }
 
 export const TableBubbleMenu = ({ editor }: TableBubbleMenuProps) => {
+  const { t } = useOptionalTranslation();
+
   return (
     <BubbleMenu
       editor={editor}
@@ -35,38 +38,38 @@ export const TableBubbleMenu = ({ editor }: TableBubbleMenuProps) => {
         <button
           type="button"
           className="tiptap-bubble-btn"
-          title="行を追加（上）"
+          title={t('LBL_TIPTAP_TABLE_ADD_ROW_BEFORE')}
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().addRowBefore().run();
           }}
         >
           <Plus size={12} />
-          <span>行↑</span>
+          <span>{t('LBL_TIPTAP_TABLE_ROW_UP')}</span>
         </button>
         <button
           type="button"
           className="tiptap-bubble-btn"
-          title="行を追加（下）"
+          title={t('LBL_TIPTAP_TABLE_ADD_ROW_AFTER')}
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().addRowAfter().run();
           }}
         >
           <Plus size={12} />
-          <span>行↓</span>
+          <span>{t('LBL_TIPTAP_TABLE_ROW_DOWN')}</span>
         </button>
         <button
           type="button"
           className="tiptap-bubble-btn"
-          title="行を削除"
+          title={t('LBL_TIPTAP_TABLE_DELETE_ROW')}
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().deleteRow().run();
           }}
         >
           <Minus size={12} />
-          <span>行</span>
+          <span>{t('LBL_TIPTAP_TABLE_ROW')}</span>
         </button>
 
         <span className="tiptap-bubble-sep" />
@@ -75,38 +78,38 @@ export const TableBubbleMenu = ({ editor }: TableBubbleMenuProps) => {
         <button
           type="button"
           className="tiptap-bubble-btn"
-          title="列を追加（左）"
+          title={t('LBL_TIPTAP_TABLE_ADD_COL_BEFORE')}
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().addColumnBefore().run();
           }}
         >
           <Plus size={12} />
-          <span>列←</span>
+          <span>{t('LBL_TIPTAP_TABLE_COL_LEFT')}</span>
         </button>
         <button
           type="button"
           className="tiptap-bubble-btn"
-          title="列を追加（右）"
+          title={t('LBL_TIPTAP_TABLE_ADD_COL_AFTER')}
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().addColumnAfter().run();
           }}
         >
           <Plus size={12} />
-          <span>列→</span>
+          <span>{t('LBL_TIPTAP_TABLE_COL_RIGHT')}</span>
         </button>
         <button
           type="button"
           className="tiptap-bubble-btn"
-          title="列を削除"
+          title={t('LBL_TIPTAP_TABLE_DELETE_COL')}
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().deleteColumn().run();
           }}
         >
           <Minus size={12} />
-          <span>列</span>
+          <span>{t('LBL_TIPTAP_TABLE_COL')}</span>
         </button>
 
         <span className="tiptap-bubble-sep" />
@@ -114,7 +117,8 @@ export const TableBubbleMenu = ({ editor }: TableBubbleMenuProps) => {
         {/* セル背景色 */}
         <CellColorPicker
           icon={<Paintbrush size={12} />}
-          title="セル背景色"
+          title={t('LBL_TIPTAP_TABLE_CELL_BG')}
+          clearLabel={t('LBL_TIPTAP_CLEAR')}
           palette={CELL_BG_COLORS}
           columns={4}
           onSelect={(color) => editor.chain().focus().setCellBackground(color).run()}
@@ -127,7 +131,7 @@ export const TableBubbleMenu = ({ editor }: TableBubbleMenuProps) => {
         <button
           type="button"
           className="tiptap-bubble-btn tiptap-bubble-btn-danger"
-          title="テーブルを削除"
+          title={t('LBL_TIPTAP_TABLE_DELETE')}
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().deleteTable().run();
@@ -144,6 +148,7 @@ export const TableBubbleMenu = ({ editor }: TableBubbleMenuProps) => {
 interface CellColorPickerProps {
   icon: React.ReactNode;
   title: string;
+  clearLabel: string;  // ハードコードされていた「クリア」を翻訳対応
   palette: string[];
   columns: number;
   onSelect: (color: string) => void;
@@ -153,6 +158,7 @@ interface CellColorPickerProps {
 const CellColorPicker = ({
   icon,
   title,
+  clearLabel,
   palette,
   columns,
   onSelect,
@@ -178,6 +184,7 @@ const CellColorPicker = ({
         type="button"
         className="tiptap-bubble-btn"
         title={title}
+        aria-pressed={open}
         onMouseDown={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -221,7 +228,7 @@ const CellColorPicker = ({
             }}
           >
             <RemoveFormatting size={12} />
-            <span>クリア</span>
+            <span>{clearLabel}</span>
           </button>
         </div>
       )}
