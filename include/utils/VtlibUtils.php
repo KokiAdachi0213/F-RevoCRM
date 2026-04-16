@@ -650,6 +650,34 @@ function vtlib_isDirWriteable($dirpath) {
 	return false;
 }
 
+/**
+ * HTMLPurifier URI フィルター: data: URI を image/* のみに限定する
+ *
+ * 【背景】HTMLPurifier の URIScheme/data.php は jpeg/gif/png のみ許可しているため
+ * data:text/html 等は既にスキームバリデーション層で拒否される。
+ * 本フィルターはその前段での defense-in-depth として機能する。
+ *
+ * 【登録方法】$config->getDefinition('URI', true)->addFilter() で登録すること。
+ * addFilter() は $this->filters[] への即時追加であり、
+ * その後の new HTMLPurifier($config) 内で呼ばれる doSetup() は filters 配列を
+ * 上書きせず追記するため、フィルターは正しく機能する。
+ * new HTMLPurifier($config) より前に呼び出すこと（config が Frozen になる前）。
+ */
+class HTMLPurifier_URIFilter_DataImageOnly extends HTMLPurifier_URIFilter {
+    public $name = 'DataImageOnly';
+    public function prepare($config) { return true; }
+    public function filter(&$uri, $config, $context) {
+        if ($uri->scheme === 'data') {
+            // data:image/* のみ通過、data:text/html 等を拒否
+            // $uri->path の形式: "image/png;base64,..." または "image/jpeg;base64,..."
+            // base64エンコードの有無を問わず image/ プレフィックスで通過させ、
+            // コンテンツ検証は下位のスキームバリデーション（doValidate()）に委ねる
+            return strncmp($uri->path, 'image/', 6) === 0;
+        }
+        return true;
+    }
+}
+
 /** HTML Purifier global instance */
 $__htmlpurifier_instance = false;
 /**
@@ -693,7 +721,7 @@ function vtlib_purify($input, $ignore = false) {
                 'ftp' => true,
                 'nntp' => true,
                 'news' => true,
-                'data' => true
+                'data' => true,  // HTMLPurifier_URIFilter_DataImageOnly で image/* のみに制限（defense-in-depth）
             );
 
             $config = HTMLPurifier_Config::createDefault();
@@ -728,6 +756,13 @@ function vtlib_purify($input, $ignore = false) {
                 // marker拡張: <span class="marker ...">
                 $def->addAttribute('span', 'class', 'CDATA');
             }
+
+            // data: URI を image/* のみに制限する defense-in-depth フィルターを登録
+            // ※ new HTMLPurifier($config) より前に呼ぶこと（この後に config が Frozen になる）
+            // ※ この行より後で $config->set() を呼んではならない
+            //   （getDefinition で autoFinalize() が呼ばれるため set が無効になる）
+            $uriDef = $config->getDefinition('URI', true);
+            $uriDef->addFilter(new HTMLPurifier_URIFilter_DataImageOnly(), $config);
 
             $__htmlpurifier_instance = new HTMLPurifier($config);
         }
