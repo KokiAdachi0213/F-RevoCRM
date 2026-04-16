@@ -103,6 +103,28 @@ const DEFAULT_TRANSLATIONS: TranslationData = {
   LBL_TIPTAP_CLEAR_FORMAT: '書式をクリア',
   LBL_TIPTAP_SOURCE_EDIT: 'HTMLソース編集',
   LBL_TIPTAP_CLEAR: 'クリア',
+  // Tiptap ツールバー（Sub/Sup/TextAlign）
+  LBL_TIPTAP_SUBSCRIPT: '下付き文字',
+  LBL_TIPTAP_SUPERSCRIPT: '上付き文字',
+  LBL_TIPTAP_ALIGN_LEFT: '左揃え',
+  LBL_TIPTAP_ALIGN_CENTER: '中央揃え',
+  LBL_TIPTAP_ALIGN_RIGHT: '右揃え',
+  LBL_TIPTAP_ALIGN_JUSTIFY: '両端揃え',
+  // Tiptap テーブルバブルメニュー
+  LBL_TIPTAP_TABLE_ADD_ROW_BEFORE: '行を追加（上）',
+  LBL_TIPTAP_TABLE_ROW_UP: '行↑',
+  LBL_TIPTAP_TABLE_ADD_ROW_AFTER: '行を追加（下）',
+  LBL_TIPTAP_TABLE_ROW_DOWN: '行↓',
+  LBL_TIPTAP_TABLE_DELETE_ROW: '行を削除',
+  LBL_TIPTAP_TABLE_ROW: '行',
+  LBL_TIPTAP_TABLE_ADD_COL_BEFORE: '列を追加（左）',
+  LBL_TIPTAP_TABLE_COL_LEFT: '列←',
+  LBL_TIPTAP_TABLE_ADD_COL_AFTER: '列を追加（右）',
+  LBL_TIPTAP_TABLE_COL_RIGHT: '列→',
+  LBL_TIPTAP_TABLE_DELETE_COL: '列を削除',
+  LBL_TIPTAP_TABLE_COL: '列',
+  LBL_TIPTAP_TABLE_CELL_BG: 'セル背景色',
+  LBL_TIPTAP_TABLE_DELETE: 'テーブルを削除',
 };
 
 interface TranslationContextValue {
