@@ -702,7 +702,7 @@ function vtlib_purify($input, $ignore = false) {
             // CSS.AllowTricky: display/visibility/overflow/opacity を許可する
             // ※ position/z-index は CSS.Trusted でのみ有効なプロパティのため、この設定では通過しない
             // ※ display:none 等によるコンテンツ隠蔽リスクは存在するが、JS実行を伴わないため低深刻度
-            // ※ display/visibility の ForbiddenProperties 追加は display:flex 等の正当CSS除去を招くため見送り
+            // ※ display を ForbiddenProperties で全面禁止すると、正当な display:block 等も除去されるため見送り
             $config->set('CSS.AllowTricky', true);
             $config->set('CSS.Proprietary', true);
             $config->set('URI.AllowedSchemes', $allowedSchemes);
