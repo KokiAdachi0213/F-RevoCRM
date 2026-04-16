@@ -699,6 +699,10 @@ function vtlib_purify($input, $ignore = false) {
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.Encoding', $use_charset);
             $config->set('Cache.SerializerPath', "$use_root_directory/test/templates_c/v7");
+            // CSS.AllowTricky: display/visibility/overflow/opacity を許可する
+            // ※ position/z-index は CSS.Trusted でのみ有効なプロパティのため、この設定では通過しない
+            // ※ display:none 等によるコンテンツ隠蔽リスクは存在するが、JS実行を伴わないため低深刻度
+            // ※ display/visibility の ForbiddenProperties 追加は display:flex 等の正当CSS除去を招くため見送り
             $config->set('CSS.AllowTricky', true);
             $config->set('CSS.Proprietary', true);
             $config->set('URI.AllowedSchemes', $allowedSchemes);
