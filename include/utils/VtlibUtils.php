@@ -732,6 +732,9 @@ function vtlib_purify($input, $ignore = false) {
             // ※ display:none 等によるコンテンツ隠蔽リスクは存在するが、JS実行を伴わないため低深刻度
             // ※ display を ForbiddenProperties で全面禁止すると、正当な display:block 等も除去されるため見送り
             $config->set('CSS.AllowTricky', true);
+            // CSS.Proprietary: -webkit-/-moz-/-ms- 等のベンダープレフィックスCSS を許可する
+            // HTMLとして保存されたリッチテキストに含まれる正当なスタイルを保持するために必要。
+            // ベンダープレフィックスCSSはJS実行能力を持たないため、XSSリスクは生じない。
             $config->set('CSS.Proprietary', true);
             $config->set('URI.AllowedSchemes', $allowedSchemes);
             $config->set('Attr.EnableID', true);
@@ -742,7 +745,10 @@ function vtlib_purify($input, $ignore = false) {
 
                 // Tiptap拡張が出力するHTML要素・属性をHTMLPurifierに許可
                 // anchor拡張: <a id="..." name="...">
-                $def->addAttribute('a', 'name', 'CDATA');
+                // NMTOKENS型: 英字・数字・ハイフン・アンダースコア等に制限し、
+                // 任意文字列を受け付けるCDATAよりも安全。
+                // 日本語等を含む名前はID属性側（Attr.EnableID）で対応。
+                $def->addAttribute('a', 'name', 'NMTOKENS');
                 // dir-attribute拡張: dir属性（ltr/rtl）
                 $def->addAttribute('p', 'dir', 'Enum#ltr,rtl');
                 $def->addAttribute('div', 'dir', 'Enum#ltr,rtl');

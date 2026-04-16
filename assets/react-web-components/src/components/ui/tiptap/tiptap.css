@@ -515,3 +515,14 @@
   background: linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.08) 40%, transparent);
   border-radius: 0 calc(var(--radius) - 4px) 0 0;
 }
+
+/* ===== Source mode removed-tag warning ===== */
+.tiptap-source-removed-warning {
+  margin-top: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #92400e;
+  background-color: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 4px;
+}

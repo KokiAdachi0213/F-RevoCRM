@@ -2351,6 +2351,8 @@ $jsLanguageStrings = array(
 	'LBL_TIPTAP_CLEAR_FORMAT'    => 'Clear Formatting',
 	'LBL_TIPTAP_SOURCE_EDIT'     => 'Edit HTML Source',
 	'LBL_TIPTAP_CLEAR'           => 'Clear',
+	'LBL_TIPTAP_TOOLBAR'                  => 'Text Editor Toolbar',
+	'LBL_TIPTAP_SOURCE_TAG_REMOVED'       => 'Some tags were removed because they are not supported by the editor.',
 	// Tiptap table bubble menu
 	'LBL_TIPTAP_TABLE_ADD_ROW_BEFORE'  => 'Add Row Above',
 	'LBL_TIPTAP_TABLE_ROW_UP'          => 'Row ↑',
@@ -2366,4 +2368,6 @@ $jsLanguageStrings = array(
 	'LBL_TIPTAP_TABLE_COL'             => 'Col',
 	'LBL_TIPTAP_TABLE_CELL_BG'         => 'Cell Background',
 	'LBL_TIPTAP_TABLE_DELETE'          => 'Delete Table',
+	'LBL_TIPTAP_ERROR_NO_FIELD'    => 'Error: Field information not found',
+	'LBL_TIPTAP_WARN_NO_UITYPE'    => 'Warning: UIType is not specified (Field: %s)',
 );

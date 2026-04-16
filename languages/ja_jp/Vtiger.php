@@ -2357,6 +2357,8 @@ $jsLanguageStrings = array(
 	'LBL_TIPTAP_CLEAR_FORMAT'    => '書式をクリア',
 	'LBL_TIPTAP_SOURCE_EDIT'     => 'HTMLソース編集',
 	'LBL_TIPTAP_CLEAR'           => 'クリア',
+	'LBL_TIPTAP_TOOLBAR'                  => 'テキストエディタツールバー',
+	'LBL_TIPTAP_SOURCE_TAG_REMOVED'       => '一部のタグはエディタでサポートされていないため除去されました。',
 	// Tiptap テーブルバブルメニュー
 	'LBL_TIPTAP_TABLE_ADD_ROW_BEFORE'  => '行を追加（上）',
 	'LBL_TIPTAP_TABLE_ROW_UP'          => '行↑',
@@ -2372,4 +2374,6 @@ $jsLanguageStrings = array(
 	'LBL_TIPTAP_TABLE_COL'             => '列',
 	'LBL_TIPTAP_TABLE_CELL_BG'         => 'セル背景色',
 	'LBL_TIPTAP_TABLE_DELETE'          => 'テーブルを削除',
+	'LBL_TIPTAP_ERROR_NO_FIELD'    => 'エラー: フィールド情報が見つかりません',
+	'LBL_TIPTAP_WARN_NO_UITYPE'    => '警告: UITypeが指定されていません (フィールド: %s)',
 );

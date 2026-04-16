@@ -66,6 +66,8 @@ export const ColorPicker = ({
             className={`tiptap-color-swatch ${currentColor === color ? "active" : ""}`}
             style={{ backgroundColor: color }}
             title={color}
+            aria-label={color}
+            aria-pressed={currentColor === color}
             onMouseDown={(e) => {
               e.preventDefault();
               onSelect(color);

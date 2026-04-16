@@ -114,6 +114,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
     const toolbarWrapperRef = useRef<HTMLDivElement>(null);
     const [showLeftGradient, setShowLeftGradient] = useState(false);
     const [showRightGradient, setShowRightGradient] = useState(true);
+    const [removedTagsWarning, setRemovedTagsWarning] = useState<string[]>([]);
     const textPalette = colors && colors.length > 0 ? colors : TEXT_COLORS;
     const highlightPalette = HIGHLIGHT_COLORS;
 
@@ -264,7 +265,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
 
     useEffect(() => {
       if (editor && value !== editor.getHTML().replace(/\u200B/g, "")) {
-        editor.commands.setContent(value || TiptapInitialValue);
+        editor.commands.setContent(value || TiptapInitialValue, { emitUpdate: false });
         setContent(value || TiptapInitialValue);
       }
     }, [editor, value]);
@@ -425,8 +426,11 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
         const removedTags = [...tagsBefore].filter(t => !tagsAfter.has(t) && !ignoredTags.has(t));
 
         if (removedTags.length > 0) {
-          // バックエンドサニタイズが主要軽減策だが、UXとして警告を記録
+          // バックエンドサニタイズが主要軽減策。UXとして警告をコンソールとUIに表示
           console.warn('[Tiptap] 非サポートタグがエディタスキーマにより除去されました:', removedTags);
+          setRemovedTagsWarning(removedTags);
+        } else {
+          setRemovedTagsWarning([]);
         }
 
         setContent(filteredHtml);
@@ -485,6 +489,8 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
         <div ref={toolbarWrapperRef} style={{ position: 'relative' }}>
           <div
             ref={toolbarRef}
+            role="toolbar"
+            aria-label={t('LBL_TIPTAP_TOOLBAR')}
             onScroll={isMobile ? handleToolbarScroll : undefined}
             className={`tiptap-toolbar${isMobile ? ' tiptap-toolbar--mobile' : ''}`}
           >
@@ -864,6 +870,14 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           <div className="tiptap-editor-content" ref={ref}>
             <EditorContent editor={editor} />
             {editor && <TableBubbleMenu editor={editor} />}
+          </div>
+        )}
+        {removedTagsWarning.length > 0 && (
+          <div
+            role="alert"
+            className="tiptap-source-removed-warning"
+          >
+            {t('LBL_TIPTAP_SOURCE_TAG_REMOVED')}
           </div>
         )}
       </div>

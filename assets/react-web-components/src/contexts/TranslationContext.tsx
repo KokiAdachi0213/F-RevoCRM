@@ -118,6 +118,12 @@ const DEFAULT_TRANSLATIONS: TranslationData = {
   LBL_TIPTAP_TABLE_COL: '列',
   LBL_TIPTAP_TABLE_CELL_BG: 'セル背景色',
   LBL_TIPTAP_TABLE_DELETE: 'テーブルを削除',
+  // FieldRenderer エラー/警告
+  LBL_TIPTAP_ERROR_NO_FIELD: 'エラー: フィールド情報が見つかりません',
+  LBL_TIPTAP_WARN_NO_UITYPE: '警告: UITypeが指定されていません (フィールド: %s)',
+  // アクセシビリティ・UX
+  LBL_TIPTAP_TOOLBAR: 'テキストエディタツールバー',
+  LBL_TIPTAP_SOURCE_TAG_REMOVED: '一部のタグはエディタでサポートされていないため除去されました。',
 };
 
 interface TranslationContextValue {
