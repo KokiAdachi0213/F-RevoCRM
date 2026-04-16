@@ -37,6 +37,12 @@ import {
   ImagePlus,
   Code,
   TableIcon,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Subscript as SubscriptIcon,    // Tiptap 拡張 Subscript と名前衝突のためエイリアス
+  Superscript as SuperscriptIcon, // 同上
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -230,6 +236,9 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
           isBold: false, isItalic: false, isUnderline: false, isStrike: false,
           isBulletList: false, isOrderedList: false, isBlockquote: false,
           blockType: "paragraph" as BlockType,
+          isSubscript: false, isSuperscript: false,
+          isAlignLeft: false, isAlignCenter: false,
+          isAlignRight: false, isAlignJustify: false,
         };
         return {
           // 既存フィールド: フォントサイズ・文字色・ハイライト
@@ -250,6 +259,12 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             : e.isActive("heading", { level: 3 }) ? "h3"
             : "paragraph"
           ) as BlockType,
+          isSubscript:    e.isActive("subscript"),
+          isSuperscript:  e.isActive("superscript"),
+          isAlignLeft:    e.isActive({ textAlign: "left" }),
+          isAlignCenter:  e.isActive({ textAlign: "center" }),
+          isAlignRight:   e.isActive({ textAlign: "right" }),
+          isAlignJustify: e.isActive({ textAlign: "justify" }),
         };
       },
     });
@@ -647,6 +662,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isBold ? "active" : ""}`}
             title={t('LBL_TIPTAP_BOLD')}
+            aria-pressed={editorToolbarState?.isBold ?? false}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleBold().run()
@@ -659,6 +675,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isItalic ? "active" : ""}`}
             title={t('LBL_TIPTAP_ITALIC')}
+            aria-pressed={editorToolbarState?.isItalic ?? false}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleItalic().run()
@@ -671,6 +688,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isUnderline ? "active" : ""}`}
             title={t('LBL_TIPTAP_UNDERLINE')}
+            aria-pressed={editorToolbarState?.isUnderline ?? false}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleUnderline().run()
@@ -683,6 +701,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isStrike ? "active" : ""}`}
             title={t('LBL_TIPTAP_STRIKETHROUGH')}
+            aria-pressed={editorToolbarState?.isStrike ?? false}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleStrike().run()
@@ -690,6 +709,32 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             }
           >
             <Strikethrough size={14} />
+          </button>
+          <button
+            type="button"
+            className={`tiptap-btn ${editorToolbarState?.isSubscript ? "active" : ""}`}
+            title={t('LBL_TIPTAP_SUBSCRIPT')}
+            aria-pressed={editorToolbarState?.isSubscript ?? false}
+            onMouseDown={(e) =>
+              handleAction(e, () =>
+                editor?.chain().focus().toggleSubscript().run()
+              )
+            }
+          >
+            <SubscriptIcon size={14} />
+          </button>
+          <button
+            type="button"
+            className={`tiptap-btn ${editorToolbarState?.isSuperscript ? "active" : ""}`}
+            title={t('LBL_TIPTAP_SUPERSCRIPT')}
+            aria-pressed={editorToolbarState?.isSuperscript ?? false}
+            onMouseDown={(e) =>
+              handleAction(e, () =>
+                editor?.chain().focus().toggleSuperscript().run()
+              )
+            }
+          >
+            <SuperscriptIcon size={14} />
           </button>
 
           <div className="tiptap-separator" />
@@ -722,11 +767,68 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
 
           <div className="tiptap-separator" />
 
+          {/* Text alignment */}
+          <button
+            type="button"
+            className={`tiptap-btn ${editorToolbarState?.isAlignLeft ? "active" : ""}`}
+            title={t('LBL_TIPTAP_ALIGN_LEFT')}
+            aria-pressed={editorToolbarState?.isAlignLeft ?? false}
+            onMouseDown={(e) =>
+              handleAction(e, () =>
+                editor?.chain().focus().setTextAlign("left").run()
+              )
+            }
+          >
+            <AlignLeft size={14} />
+          </button>
+          <button
+            type="button"
+            className={`tiptap-btn ${editorToolbarState?.isAlignCenter ? "active" : ""}`}
+            title={t('LBL_TIPTAP_ALIGN_CENTER')}
+            aria-pressed={editorToolbarState?.isAlignCenter ?? false}
+            onMouseDown={(e) =>
+              handleAction(e, () =>
+                editor?.chain().focus().setTextAlign("center").run()
+              )
+            }
+          >
+            <AlignCenter size={14} />
+          </button>
+          <button
+            type="button"
+            className={`tiptap-btn ${editorToolbarState?.isAlignRight ? "active" : ""}`}
+            title={t('LBL_TIPTAP_ALIGN_RIGHT')}
+            aria-pressed={editorToolbarState?.isAlignRight ?? false}
+            onMouseDown={(e) =>
+              handleAction(e, () =>
+                editor?.chain().focus().setTextAlign("right").run()
+              )
+            }
+          >
+            <AlignRight size={14} />
+          </button>
+          <button
+            type="button"
+            className={`tiptap-btn ${editorToolbarState?.isAlignJustify ? "active" : ""}`}
+            title={t('LBL_TIPTAP_ALIGN_JUSTIFY')}
+            aria-pressed={editorToolbarState?.isAlignJustify ?? false}
+            onMouseDown={(e) =>
+              handleAction(e, () =>
+                editor?.chain().focus().setTextAlign("justify").run()
+              )
+            }
+          >
+            <AlignJustify size={14} />
+          </button>
+
+          <div className="tiptap-separator" />
+
           {/* Lists & indent */}
           <button
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isBulletList ? "active" : ""}`}
             title={t('LBL_TIPTAP_BULLET_LIST')}
+            aria-pressed={editorToolbarState?.isBulletList ?? false}
             onMouseDown={(e) => handleAction(e, handleBulletListToggle)}
           >
             <List size={14} />
@@ -735,6 +837,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isOrderedList ? "active" : ""}`}
             title={t('LBL_TIPTAP_ORDERED_LIST')}
+            aria-pressed={editorToolbarState?.isOrderedList ?? false}
             onMouseDown={(e) => handleAction(e, handleOrderedListToggle)}
           >
             <ListOrdered size={14} />
@@ -763,6 +866,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             type="button"
             className={`tiptap-btn ${editorToolbarState?.isBlockquote ? "active" : ""}`}
             title={t('LBL_TIPTAP_BLOCKQUOTE')}
+            aria-pressed={editorToolbarState?.isBlockquote ?? false}
             onMouseDown={(e) =>
               handleAction(e, () =>
                 editor?.chain().focus().toggleBlockquote().run()
@@ -826,6 +930,7 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
             type="button"
             className={`tiptap-btn ${sourceMode ? "active" : ""}`}
             title={t('LBL_TIPTAP_SOURCE_EDIT')}
+            aria-pressed={sourceMode}
             onMouseDown={(e) => {
               e.preventDefault();
               toggleSourceMode();
