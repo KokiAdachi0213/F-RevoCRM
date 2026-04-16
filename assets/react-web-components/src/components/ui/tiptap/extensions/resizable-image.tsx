@@ -24,8 +24,9 @@ const ResizableImageComponent = ({
         0;
       const ratio = startWidth > 0 ? startHeight / startWidth : 0;
       setResizing(true);
+      const maxWidth = window.innerWidth;
       const onMouseMove = (ev: MouseEvent) => {
-        const newWidth = Math.max(50, startWidth + ev.clientX - startX);
+        const newWidth = Math.min(maxWidth, Math.max(50, startWidth + ev.clientX - startX));
         const newHeight = ratio > 0 ? Math.round(newWidth * ratio) : null;
         updateAttributes({ width: newWidth, height: newHeight });
       };
@@ -82,11 +83,12 @@ export const ResizableImage = Image.extend({
         default: null,
         parseHTML: (element) => {
           const w = element.getAttribute("width") || element.style.width;
-          return w ? parseInt(String(w), 10) || null : null;
+          const parsed = w ? parseInt(String(w), 10) || null : null;
+          return parsed !== null ? Math.min(parsed, 2000) : null;
         },
         renderHTML: (attributes) => {
           if (!attributes.width) return {};
-          const w = parseInt(String(attributes.width), 10);
+          const w = Math.min(parseInt(String(attributes.width), 10), 2000);
           if (!w || w <= 0) return {};
           return {
             width: w,
@@ -97,13 +99,23 @@ export const ResizableImage = Image.extend({
       height: {
         default: null,
         parseHTML: (element) => {
+          const rawW = element.getAttribute("width") || element.style.width;
+          const origW = rawW ? parseInt(String(rawW), 10) || 0 : 0;
           const h = element.getAttribute("height") || element.style.height;
-          return h ? parseInt(String(h), 10) || null : null;
+          const parsed = h ? parseInt(String(h), 10) || null : null;
+          if (parsed !== null && origW > 2000) {
+            return Math.round(parsed * 2000 / origW);
+          }
+          return parsed;
         },
         renderHTML: (attributes) => {
           if (!attributes.height) return {};
           const h = parseInt(String(attributes.height), 10);
           if (!h || h <= 0) return {};
+          const rawW = attributes.width ? parseInt(String(attributes.width), 10) : 0;
+          if (rawW > 2000) {
+            return { height: Math.round(h * 2000 / rawW) };
+          }
           return { height: h };
         },
       },

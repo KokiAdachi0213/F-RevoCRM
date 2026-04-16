@@ -45,7 +45,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
   if (!field) {
     return (
       <div className="text-red-600 p-2 border border-red-300 rounded">
-        エラー: フィールド情報が見つかりません
+        {t('LBL_TIPTAP_ERROR_NO_FIELD')}
       </div>
     );
   }
@@ -53,7 +53,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
   if (!field.uitype) {
     return (
       <div className="text-yellow-600 p-2 border border-yellow-300 rounded">
-        警告: UITypeが指定されていません (フィールド: {field.name})
+        {t('LBL_TIPTAP_WARN_NO_UITYPE', field.name)}
       </div>
     );
   }

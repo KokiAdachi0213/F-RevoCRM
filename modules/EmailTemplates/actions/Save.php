@@ -47,14 +47,10 @@ class EmailTemplates_Save_Action extends Vtiger_Save_Action {
 
 		$recordId = $recordModel->save();
 		$recordModel->updateImageName($recordId);
-		if ($request->get('returnmodule') && $request->get('returnview')){
-			$loadUrl = 'index.php?'.$request->getReturnURL();
+		if ($request->get('returnmodule') && $request->get('returnview')) {
+			$loadUrl = 'index.php?' . $request->getReturnURL();
 		} else {
-			if ($request->get('returnmodule') && $request->get('returnview')) {
-				$loadUrl = 'index.php?' . $request->getReturnURL();
-			} else {
-				$loadUrl = $recordModel->getDetailViewUrl();
-			}
+			$loadUrl = $recordModel->getDetailViewUrl();
 		}
 		header("Location: $loadUrl");
 	}
