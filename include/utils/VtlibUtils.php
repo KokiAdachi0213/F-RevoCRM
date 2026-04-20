@@ -678,6 +678,28 @@ class HTMLPurifier_URIFilter_DataImageOnly extends HTMLPurifier_URIFilter {
     }
 }
 
+/**
+ * HTMLPurifier AttrDef: span.class をマーカー機能の許可クラスのみに制限する
+ *
+ * フロントエンドの extensions/marker.ts の MARKER_CLASS_COLORS と同期すること。
+ * フロント側でクラスを追加した場合はこのリストも合わせて更新すること。
+ */
+class HTMLPurifier_AttrDef_SpanMarkerClass extends HTMLPurifier_AttrDef {
+    private static $ALLOWED = [
+        'marker',
+        'marker-yellow',
+        'marker-green',
+        'marker-pink',
+        'marker-blue',
+    ];
+
+    public function validate($string, $config, $context) {
+        $parts = preg_split('/\s+/', trim($string), -1, PREG_SPLIT_NO_EMPTY);
+        $allowed = array_filter($parts, fn($p) => in_array($p, self::$ALLOWED, true));
+        return empty($allowed) ? false : implode(' ', $allowed);
+    }
+}
+
 /** HTML Purifier global instance */
 $__htmlpurifier_instance = false;
 /**
@@ -760,7 +782,8 @@ function vtlib_purify($input, $ignore = false) {
                 // kbd拡張
                 $def->addElement('kbd', 'Inline', 'Inline', 'Common');
                 // marker拡張: <span class="marker ...">
-                $def->addAttribute('span', 'class', 'CDATA');
+                // 任意文字列（CDATA）ではなくホワイトリストクラスのみ許可
+                $def->addAttribute('span', 'class', new HTMLPurifier_AttrDef_SpanMarkerClass());
             }
 
             // data: URI を image/* のみに制限する defense-in-depth フィルターを登録
