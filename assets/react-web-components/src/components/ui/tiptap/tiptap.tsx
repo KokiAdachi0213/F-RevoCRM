@@ -75,6 +75,7 @@ import { TEXT_COLORS, HIGHLIGHT_COLORS } from "./constants";
 import { formatHtml } from "./utils";
 import "./tiptap.css";
 import { useOptionalTranslation } from '../../../hooks/useTranslation';
+import DOMPurify from 'dompurify';
 
 /* ================================================================
  * メインコンポーネント
@@ -407,8 +408,9 @@ const Tiptap = React.forwardRef<HTMLDivElement, TiptapProps>(
         // ソースモード突入時: ZWS（フォントサイズ変更時の副作用）を除去してから表示
         setSourceHtml(formatHtml(editor.getHTML().replace(/\u200B/g, '')));
       } else {
-        // ソース内容をエディタのスキーマでフィルタリングしてからonChangeに渡す
-        editor.commands.setContent(sourceHtml, { emitUpdate: false });
+        // ソース内容をDOMPurifyでサニタイズしてからエディタのスキーマでフィルタリング
+        const sanitized = DOMPurify.sanitize(sourceHtml);
+        editor.commands.setContent(sanitized, { emitUpdate: false });
         // スキーマフィルタ済みHTML（ZWSも除去）
         const filteredHtml = editor.getHTML().replace(/\u200B/g, '');
 
